@@ -39,11 +39,71 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Register Service Worker for PWA
+let deferredPrompt = null;
+
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log('✅ Service Worker registrado!', reg.scope))
             .catch(err => console.log('❌ Service Worker erro:', err));
+    }
+
+    // Listen for install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('📱 App pronto para instalar!');
+        showInstallButton();
+    });
+
+    // Check if already installed
+    window.addEventListener('appinstalled', () => {
+        console.log('✅ App instalado com sucesso!');
+        hideInstallButton();
+        showToast('🎉 App instalado! Encontre na sua tela inicial.', 'success');
+    });
+}
+
+function showInstallButton() {
+    // Create install banner if not exists
+    if (!document.getElementById('installBanner')) {
+        const banner = document.createElement('div');
+        banner.id = 'installBanner';
+        banner.innerHTML = `
+            <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+                        background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+                        padding: 15px 25px; border-radius: 50px; 
+                        box-shadow: 0 4px 20px rgba(99,102,241,0.5);
+                        display: flex; align-items: center; gap: 15px; z-index: 9999;
+                        animation: slideUp 0.5s ease;">
+                <span style="font-size: 24px;">📱</span>
+                <span style="color: white; font-weight: 600;">Instalar App</span>
+                <button onclick="installApp()" style="background: white; color: #6366f1; 
+                        border: none; padding: 8px 20px; border-radius: 25px; 
+                        font-weight: 700; cursor: pointer;">INSTALAR</button>
+                <button onclick="hideInstallButton()" style="background: transparent; 
+                        border: none; color: white; font-size: 20px; cursor: pointer;">✕</button>
+            </div>
+        `;
+        document.body.appendChild(banner);
+    }
+}
+
+function hideInstallButton() {
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.remove();
+}
+
+async function installApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('Instalação:', outcome);
+        deferredPrompt = null;
+        hideInstallButton();
+    } else {
+        // Fallback instructions
+        showToast('📱 Toque no menu do navegador (⋮) e selecione "Adicionar à tela inicial"', 'info');
     }
 }
 
