@@ -1711,3 +1711,153 @@ function endConversation() {
 document.addEventListener('DOMContentLoaded', () => {
     // Will be called when conversation section is shown
 });
+
+// ===== AI CONVERSATION FUNCTIONS =====
+let selectedConversationLevel = 'beginner';
+
+function initConversation() {
+    if (typeof AIConversation !== 'undefined') {
+        AIConversation.init();
+        loadTopics(selectedConversationLevel);
+    } else {
+        console.error('AIConversation not loaded!');
+    }
+}
+
+function selectConversationLevel(level) {
+    selectedConversationLevel = level;
+    document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+    const btnId = 'level' + level.charAt(0).toUpperCase() + level.slice(1);
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.add('active');
+    loadTopics(level);
+}
+
+function loadTopics(level) {
+    const topicGrid = document.getElementById('topicGrid');
+    if (!topicGrid || typeof AIConversation === 'undefined') return;
+
+    const topics = AIConversation.getSuggestedTopics(level);
+    topicGrid.innerHTML = topics.map(topic => `
+        <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
+            <span class="topic-icon">${topic.icon}</span>
+            <span class="topic-name">${topic.name}</span>
+        </div>
+    `).join('');
+}
+
+function startConversationTopic(topicId) {
+    if (typeof AIConversation === 'undefined') {
+        showToast('Sistema de conversa não carregado', 'error');
+        return;
+    }
+
+    document.getElementById('conversationSetup').classList.add('hidden');
+    document.getElementById('chatContainer').classList.remove('hidden');
+    document.getElementById('chatMessages').innerHTML = '';
+
+    const starterMessage = AIConversation.startConversation(topicId, selectedConversationLevel);
+    addChatMessage('ai', starterMessage);
+
+    const autoSpeak = document.getElementById('autoSpeak');
+    if (autoSpeak && autoSpeak.checked) {
+        setTimeout(() => speak(starterMessage), 500);
+    }
+}
+
+function addChatMessage(role, message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${role}-message`;
+
+    const safeMessage = message.replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+    if (role === 'ai') {
+        messageDiv.innerHTML = `
+            <div class="message-avatar">👩‍🏫</div>
+            <div class="message-content">
+                <div class="message-text">${message}</div>
+                <button class="btn-speak-msg" onclick="speak('${safeMessage}')">🔊</button>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-text">${message}</div>
+            </div>
+            <div class="message-avatar">👤</div>
+        `;
+    }
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    addChatMessage('user', message);
+    input.value = '';
+
+    if (typeof AIConversation !== 'undefined') {
+        const result = await AIConversation.processMessage(message);
+
+        const showCorrections = document.getElementById('showCorrections');
+        if (result.corrections && result.corrections.length > 0 && showCorrections && showCorrections.checked) {
+            showGrammarCorrection(result.corrections);
+        }
+
+        if (result.encouragement) {
+            showEncouragement(result.encouragement);
+        }
+
+        setTimeout(() => {
+            addChatMessage('ai', result.response);
+            const autoSpeak = document.getElementById('autoSpeak');
+            if (autoSpeak && autoSpeak.checked) {
+                speak(result.response);
+            }
+        }, 600);
+    }
+}
+
+function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendChatMessage();
+    }
+}
+
+function showGrammarCorrection(corrections) {
+    const container = document.getElementById('grammarCorrection');
+    const content = document.getElementById('correctionContent');
+    if (!container || !content) return;
+
+    content.innerHTML = corrections.map(c => `
+        <div class="correction-item">
+            <span class="wrong">❌ "${c.wrong}"</span>
+            <span class="arrow">→</span>
+            <span class="correct">✅ "${c.correct}"</span>
+            <p class="explanation">💡 ${c.explanation}</p>
+        </div>
+    `).join('');
+
+    container.classList.remove('hidden');
+    setTimeout(() => hideGrammarCorrection(), 8000);
+}
+
+function hideGrammarCorrection() {
+    const el = document.getElementById('grammarCorrection');
+    if (el) el.classList.add('hidden');
+}
+
+function showEncouragement(text) {
+    const container = document.getElementById('encouragement');
+    const textEl = document.getElementById('encouragementText');
+    if (!container || !textEl) return;
+
+    textEl.textContent = text;
+    container.classList.remove('hidden');
+    setTimeout(() => container.classList.add('hidden'), 3000);
+}
