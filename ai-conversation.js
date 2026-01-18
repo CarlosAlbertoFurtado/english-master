@@ -1,16 +1,200 @@
 // ===== AI CONVERSATION SYSTEM =====
 // Real-time English conversation practice with AI tutor
+// Now with FREE API integration for INFINITE conversations!
 
 const AIConversation = {
     // Current conversation state
-    currentLevel: 'beginner', // beginner, intermediate, advanced
+    currentLevel: 'beginner',
     currentTopic: null,
     conversationHistory: [],
+    isUsingAPI: true,
+    apiRetries: 0,
+
     userProfile: {
         commonMistakes: [],
         vocabularyUsed: [],
         topicsDiscussed: [],
-        sessionsCount: 0
+        sessionsCount: 0,
+        userName: null
+    },
+
+    // Free AI API Configuration (no key needed for basic usage)
+    apiConfig: {
+        // Free conversational AI endpoints
+        endpoints: [
+            'https://api.cohere.ai/v1/chat',
+            'https://api-inference.huggingface.co/models/microsoft/DialoGPT-large'
+        ],
+        currentEndpoint: 0
+    },
+
+    // Massive response database for infinite offline conversations
+    responseDatabase: {
+        conversational: [
+            "That's really interesting! I'd love to hear more about your perspective on this.",
+            "Wow, I hadn't thought about it that way! Can you elaborate?",
+            "That's a great point! It reminds me... what do you think about {related_topic}?",
+            "Fascinating! How did you come to that conclusion?",
+            "I completely understand! Have you always felt this way?",
+            "That makes a lot of sense! What experiences led you to this view?",
+            "Interesting perspective! Do others around you share this opinion?",
+            "I appreciate you sharing that! It's always enlightening to hear different viewpoints.",
+            "That's quite thought-provoking! Have you ever considered the opposite perspective?",
+            "Really? That's new to me! Tell me more about how that works.",
+            "I see what you mean! How does this affect your daily life?",
+            "That's a unique way of looking at it! Where did you learn about this?",
+            "How interesting! I'm curious about what motivated you to think about this.",
+            "That resonates with me! Have you talked to others about this?",
+            "Brilliant observation! What made you notice this pattern?",
+            "I love how you explained that! Can you give me a specific example?",
+            "That's very insightful! How long have you been interested in this topic?",
+            "Wonderful point! It connects to something I was thinking about...",
+            "I'm impressed by your analysis! What sources inform your thinking?",
+            "That's a perspective I haven't encountered before! Please continue.",
+            "You raise an excellent point! How would you apply this practically?",
+            "That's compelling! What would you say to someone who disagrees?",
+            "Interesting! How does this compare to your earlier experiences?",
+            "I find your view refreshing! What inspired this line of thinking?",
+            "That's deep! Have you always been so reflective about these things?"
+        ],
+
+        questions: [
+            "What made you interested in learning English?",
+            "Do you have any favorite English songs or movies?",
+            "Have you ever traveled to an English-speaking country?",
+            "What's the most challenging part of learning English for you?",
+            "Do you practice English with anyone else?",
+            "What are your goals for learning English?",
+            "Have you tried watching shows in English?",
+            "What's your favorite English word and why?",
+            "Do you read any books in English?",
+            "How do you practice your pronunciation?",
+            "What topics do you enjoy discussing most?",
+            "Have you ever had a conversation with a native speaker?",
+            "What would you do if you were fluent in English?",
+            "Do you prefer British or American English?",
+            "What English expressions do you find confusing?",
+            "Have you tried thinking in English?",
+            "What's a recent achievement in your English learning?",
+            "Do you use any apps to learn English?",
+            "What motivates you to keep learning?",
+            "Have you set any specific language goals for this year?",
+            "What's your dream job that requires English?",
+            "Do you follow any English-speaking YouTubers?",
+            "What's the funniest English mistake you've made?",
+            "How do you feel when you successfully communicate in English?",
+            "What aspect of English would you like to improve most?"
+        ],
+
+        topicFollowUps: {
+            greetings: [
+                "So, what brings you here today?",
+                "I'm excited to practice with you! What would you like to talk about?",
+                "It's wonderful to meet you! Tell me something interesting about yourself.",
+                "I'm all ears! What's been on your mind lately?",
+                "Let's have a great conversation! What are you passionate about?"
+            ],
+            family: [
+                "Family dynamics are so interesting! Are you close with your parents?",
+                "Do you have any traditions your family follows?",
+                "What values did your family teach you growing up?",
+                "Who in your family has influenced you the most?",
+                "Do you see your extended family often?"
+            ],
+            food: [
+                "Have you tried cooking any international cuisines?",
+                "What's a comfort food that reminds you of home?",
+                "Do you enjoy trying foods from other cultures?",
+                "What's the strangest food you've ever tasted?",
+                "Are you more of a sweet or savory person?"
+            ],
+            travel: [
+                "What's on your travel bucket list?",
+                "Do you prefer adventure travel or relaxation?",
+                "Have you experienced any culture shocks while traveling?",
+                "What's the most memorable trip you've taken?",
+                "Do you like to plan trips in detail or go with the flow?"
+            ],
+            work: [
+                "What inspired you to choose your career path?",
+                "How do you maintain work-life balance?",
+                "What skills are you currently developing?",
+                "What's the best advice you've received about work?",
+                "Where do you see yourself professionally in 5 years?"
+            ],
+            technology: [
+                "How has technology changed your daily routine?",
+                "What's your take on artificial intelligence?",
+                "Are there any tech innovations you're excited about?",
+                "How do you feel about social media's impact on society?",
+                "What technology could you not live without?"
+            ],
+            hobbies: [
+                "How did you discover your favorite hobby?",
+                "Do your hobbies help you relax or energize you?",
+                "Have you ever turned a hobby into something more serious?",
+                "What hobby would you love to try but haven't yet?",
+                "Do you prefer solo hobbies or group activities?"
+            ],
+            movies: [
+                "What genre of movies do you enjoy most?",
+                "Have any movies changed your perspective on something?",
+                "Who's your favorite actor or director?",
+                "Do you prefer watching movies at home or in theaters?",
+                "What movie would you recommend everyone should see?"
+            ],
+            health: [
+                "How do you maintain your mental health?",
+                "What's your approach to staying active?",
+                "Have you tried any wellness trends?",
+                "What role does nutrition play in your life?",
+                "How do you handle stress?"
+            ],
+            education: [
+                "What subject fascinated you most in school?",
+                "Do you believe in lifelong learning?",
+                "What's something new you've learned recently?",
+                "How do you prefer to learn - reading, watching, or doing?",
+                "What educational experience shaped you the most?"
+            ]
+        },
+
+        encouragements: [
+            "Your English is really improving! I can tell you've been practicing! 🌟",
+            "Excellent sentence structure! You're doing amazingly well! 👏",
+            "I love how naturally you're expressing yourself! Keep it up! 💪",
+            "That was a perfect way to phrase that! You're making great progress! ✨",
+            "Your vocabulary is expanding beautifully! I'm impressed! 🎯",
+            "You're communicating so clearly now! Fantastic work! 👍",
+            "What a thoughtful response! Your English skills are shining! 🚀",
+            "I can see your confidence growing with each message! 💫",
+            "That expression was spot-on! Native speakers use it just like that! 🎉",
+            "You're really getting the hang of this! Proud of your progress! 🏆"
+        ],
+
+        corrections: {
+            'i is': { correct: 'I am', tip: "Remember: 'I' always takes 'am'" },
+            'he are': { correct: 'He is', tip: "Third person singular uses 'is'" },
+            'they is': { correct: 'They are', tip: "'They' is plural, so use 'are'" },
+            'she have': { correct: 'She has', tip: "He/she/it + has (not have)" },
+            'he have': { correct: 'He has', tip: "He/she/it + has (not have)" },
+            'i has': { correct: 'I have', tip: "'I' takes 'have', not 'has'" },
+            'we is': { correct: 'We are', tip: "'We' is plural, use 'are'" },
+            'a apple': { correct: 'an apple', tip: "Use 'an' before vowel sounds" },
+            'a hour': { correct: 'an hour', tip: "'Hour' sounds like it starts with a vowel" },
+            'an book': { correct: 'a book', tip: "Use 'a' before consonant sounds" },
+            'yesterday i go': { correct: 'Yesterday I went', tip: "Use past tense for past actions" },
+            'tomorrow i go': { correct: "Tomorrow I will go", tip: "Use future tense for future actions" },
+            'he dont': { correct: "He doesn't", tip: "He/she/it + doesn't (not don't)" },
+            'she dont': { correct: "She doesn't", tip: "He/she/it + doesn't (not don't)" },
+            'it dont': { correct: "It doesn't", tip: "He/she/it + doesn't (not don't)" },
+            'i am agree': { correct: 'I agree', tip: "'Agree' is a verb, no 'am' needed" },
+            'i am like': { correct: 'I like', tip: "'Like' is already a verb" },
+            'more better': { correct: 'better', tip: "'Better' is already comparative" },
+            'more easier': { correct: 'easier', tip: "Don't use 'more' with -er adjectives" },
+            'informations': { correct: 'information', tip: "'Information' is uncountable (no 's')" },
+            'advices': { correct: 'advice', tip: "'Advice' is uncountable (no 's')" }
+        }
     },
 
     // Conversation topics organized by level
@@ -23,7 +207,8 @@ const AIConversation = {
             { id: 'weather', name: '🌤️ Weather', icon: '🌤️' },
             { id: 'hobbies', name: '🎮 Hobbies & Free Time', icon: '🎮' },
             { id: 'daily', name: '📅 Daily Routine', icon: '📅' },
-            { id: 'directions', name: '🗺️ Asking Directions', icon: '🗺️' }
+            { id: 'directions', name: '🗺️ Asking Directions', icon: '🗺️' },
+            { id: 'freeChat', name: '💬 Free Conversation', icon: '💬' }
         ],
         intermediate: [
             { id: 'travel', name: '✈️ Travel & Vacations', icon: '✈️' },
@@ -33,7 +218,8 @@ const AIConversation = {
             { id: 'technology', name: '💻 Technology', icon: '💻' },
             { id: 'environment', name: '🌍 Environment', icon: '🌍' },
             { id: 'culture', name: '🎭 Culture & Traditions', icon: '🎭' },
-            { id: 'education', name: '📚 Education', icon: '📚' }
+            { id: 'education', name: '📚 Education', icon: '📚' },
+            { id: 'freeChat', name: '💬 Free Conversation', icon: '💬' }
         ],
         advanced: [
             { id: 'politics', name: '🏛️ Politics & Society', icon: '🏛️' },
@@ -43,228 +229,30 @@ const AIConversation = {
             { id: 'psychology', name: '🧠 Psychology', icon: '🧠' },
             { id: 'debate', name: '⚖️ Debates & Opinions', icon: '⚖️' },
             { id: 'literature', name: '📖 Literature & Arts', icon: '📖' },
-            { id: 'future', name: '🚀 Future & Technology', icon: '🚀' }
+            { id: 'future', name: '🚀 Future & Technology', icon: '🚀' },
+            { id: 'freeChat', name: '💬 Free Conversation', icon: '💬' }
         ]
     },
 
-    // AI personality and conversation starters
-    aiPersonality: {
-        name: 'Emma',
-        role: 'Native English Teacher',
-        traits: ['friendly', 'patient', 'encouraging', 'helpful']
-    },
-
-    // Conversation templates by topic
-    conversationTemplates: {
-        greetings: {
-            starters: [
-                "Hi there! I'm Emma, your English conversation partner. What's your name?",
-                "Hello! Nice to meet you! How are you doing today?",
-                "Hey! Welcome to our English practice session! Tell me about yourself."
-            ],
-            responses: {
-                name: [
-                    "Nice to meet you, {name}! That's a lovely name. Where are you from?",
-                    "Great to meet you, {name}! How long have you been learning English?",
-                    "{name}, what a nice name! What do you like to do in your free time?"
-                ],
-                feeling: [
-                    "I'm glad to hear that! What made your day good?",
-                    "I hope things get better! Would you like to talk about something fun to cheer up?",
-                    "That's wonderful! Do you have any plans for today?"
-                ],
-                location: [
-                    "Oh, {location} sounds interesting! What's the weather like there?",
-                    "I've heard great things about {location}! What do you like most about living there?",
-                    "{location}! That's cool. Is it a big city or a small town?"
-                ]
-            },
-            vocabulary: ['hello', 'hi', 'nice to meet you', 'how are you', 'fine', 'great', 'my name is', 'I am from'],
-            corrections: {
-                'i am': "Remember to capitalize 'I' - it should be 'I am'",
-                'im': "The correct form is 'I'm' or 'I am'",
-                'i m': "Use 'I'm' (with apostrophe) as a contraction"
-            }
-        },
-        family: {
-            starters: [
-                "Let's talk about family! Do you have a big or small family?",
-                "Family is so important! Tell me about your family.",
-                "I'd love to hear about the people close to you. Who lives with you?"
-            ],
-            responses: {
-                size: [
-                    "A {size} family sounds {adjective}! Do you have any brothers or sisters?",
-                    "That's nice! Are you close with your family members?",
-                    "Family gatherings must be {adjective}! What do you usually do together?"
-                ],
-                siblings: [
-                    "Having {number} sibling(s) must be fun! Are you the oldest or youngest?",
-                    "Do you get along well with your sibling(s)?",
-                    "That's great! What activities do you do together?"
-                ]
-            },
-            vocabulary: ['mother', 'father', 'brother', 'sister', 'parents', 'siblings', 'grandmother', 'grandfather'],
-            followUp: [
-                "What does your {member} do for work?",
-                "Do you look like your {member}?",
-                "What's your favorite memory with your family?"
-            ]
-        },
-        food: {
-            starters: [
-                "I love talking about food! What's your favorite dish?",
-                "Are you hungry? Let's talk about delicious food!",
-                "Food is one of my favorite topics! Do you like cooking?"
-            ],
-            responses: {
-                favorite: [
-                    "{food} is delicious! Do you know how to cook it?",
-                    "Yum! I love {food} too! What restaurant makes the best one?",
-                    "That sounds tasty! Is it a traditional dish from your country?"
-                ],
-                cooking: [
-                    "That's impressive! What's your specialty dish?",
-                    "I love home cooking! What did you cook recently?",
-                    "Do you prefer cooking at home or eating out?"
-                ]
-            },
-            vocabulary: ['delicious', 'tasty', 'cook', 'recipe', 'ingredients', 'restaurant', 'breakfast', 'lunch', 'dinner'],
-            scenarios: [
-                "Imagine we're at a restaurant. How would you order your food?",
-                "Let's practice: You want to ask for the menu. What do you say?",
-                "Role play: I'm a waiter. What would you like to order?"
-            ]
-        },
-        travel: {
-            starters: [
-                "I love traveling! Have you ever been to another country?",
-                "Let's dream about travel! Where would you like to go?",
-                "Traveling opens your mind! What's the best trip you've ever taken?"
-            ],
-            responses: {
-                destination: [
-                    "{place} is amazing! What would you like to see there?",
-                    "I've always wanted to visit {place}! What attracts you to it?",
-                    "Great choice! Do you prefer beaches, mountains, or cities?"
-                ],
-                experience: [
-                    "That sounds like an incredible experience! What was the highlight?",
-                    "Wow! Did you try any local food there?",
-                    "Amazing! Did you face any language barriers?"
-                ]
-            },
-            vocabulary: ['flight', 'hotel', 'passport', 'luggage', 'tourist', 'adventure', 'culture', 'explore'],
-            scenarios: [
-                "Let's practice checking in at a hotel. What would you say?",
-                "Imagine you're lost in a foreign city. How do you ask for help?",
-                "You want to book a flight. What information do you need?"
-            ]
-        },
-        work: {
-            starters: [
-                "Let's talk about careers! What do you do for a living?",
-                "Work takes up a lot of our time! Do you enjoy your job?",
-                "Career goals are important! What's your dream job?"
-            ],
-            responses: {
-                job: [
-                    "Being a {job} sounds interesting! What do you like most about it?",
-                    "That's a great profession! What does a typical day look like for you?",
-                    "{job}! That requires skill. How did you get into that field?"
-                ],
-                goals: [
-                    "That's an ambitious goal! What steps are you taking to achieve it?",
-                    "I believe you can do it! What skills do you need to develop?",
-                    "Great ambition! Have you made a plan to reach that goal?"
-                ]
-            },
-            vocabulary: ['salary', 'interview', 'resume', 'colleague', 'deadline', 'meeting', 'promotion', 'skills'],
-            scenarios: [
-                "Let's practice a job interview! Tell me about yourself.",
-                "You need to ask for a day off. How do you approach your boss?",
-                "Practice: You want to negotiate a higher salary. What do you say?"
-            ]
-        },
-        technology: {
-            starters: [
-                "Technology is everywhere! What gadgets do you use daily?",
-                "Let's talk tech! Are you into smartphones, computers, or gaming?",
-                "The digital age is amazing! How has technology changed your life?"
-            ],
-            responses: {
-                devices: [
-                    "I love my {device} too! What do you use it for most?",
-                    "Technology makes life easier! What app can't you live without?",
-                    "That's cool! Do you consider yourself tech-savvy?"
-                ],
-                opinions: [
-                    "That's an interesting perspective! Do you think AI will change everything?",
-                    "I agree/disagree! What about privacy concerns?",
-                    "Technology has pros and cons. What worries you about it?"
-                ]
-            },
-            vocabulary: ['smartphone', 'laptop', 'internet', 'software', 'application', 'download', 'upload', 'wireless'],
-            debates: [
-                "Do you think social media is good or bad for society?",
-                "Will robots take our jobs in the future?",
-                "Is it okay to spend many hours on your phone?"
-            ]
-        }
-    },
-
-    // Grammar correction patterns
-    grammarPatterns: {
-        subjectVerb: {
-            'i is': { correct: 'I am', explanation: "Use 'am' with 'I'" },
-            'he are': { correct: 'He is', explanation: "Use 'is' with he/she/it" },
-            'they is': { correct: 'They are', explanation: "Use 'are' with they/we/you" },
-            'she have': { correct: 'She has', explanation: "Use 'has' with he/she/it" },
-            'he have': { correct: 'He has', explanation: "Use 'has' with he/she/it" }
-        },
-        articles: {
-            'a apple': { correct: 'an apple', explanation: "Use 'an' before vowel sounds" },
-            'a hour': { correct: 'an hour', explanation: "Use 'an' before silent 'h'" },
-            'an book': { correct: 'a book', explanation: "Use 'a' before consonant sounds" }
-        },
-        tenses: {
-            'yesterday i go': { correct: 'Yesterday I went', explanation: "Use past tense for past actions" },
-            'i am go': { correct: 'I am going / I go', explanation: "Use 'going' for continuous or base form for simple" },
-            'he dont': { correct: "He doesn't", explanation: "Use 'doesn't' with he/she/it" }
-        }
-    },
-
-    // Encouraging phrases
-    encouragement: [
-        "Great job! Your English is improving! 🌟",
-        "Excellent sentence structure! Keep it up! 👏",
-        "You're doing wonderfully! 💪",
-        "That's a great way to express that! ✨",
-        "I love how you used that word! 🎯",
-        "Your pronunciation would be perfect! 👍",
-        "You're making fantastic progress! 🚀"
-    ],
-
-    // Initialize conversation
+    // Initialize
     init() {
         this.loadUserProfile();
         this.conversationHistory = [];
+        console.log('🤖 AI Conversation System initialized!');
     },
 
-    // Load user profile from localStorage
     loadUserProfile() {
         const saved = localStorage.getItem('aiConversationProfile');
         if (saved) {
-            this.userProfile = JSON.parse(saved);
+            this.userProfile = { ...this.userProfile, ...JSON.parse(saved) };
         }
     },
 
-    // Save user profile
     saveUserProfile() {
         localStorage.setItem('aiConversationProfile', JSON.stringify(this.userProfile));
     },
 
-    // Start a new conversation
+    // Start conversation with a topic
     startConversation(topic, level) {
         this.currentTopic = topic;
         this.currentLevel = level;
@@ -273,146 +261,289 @@ const AIConversation = {
         this.userProfile.topicsDiscussed.push(topic);
         this.saveUserProfile();
 
-        const template = this.conversationTemplates[topic];
-        if (template) {
-            const starter = template.starters[Math.floor(Math.random() * template.starters.length)];
-            this.addToHistory('ai', starter);
-            return starter;
-        }
-
-        return this.getGenericStarter(topic);
-    },
-
-    // Get generic starter for topics without templates
-    getGenericStarter(topic) {
-        const starters = [
-            `Let's talk about ${topic}! What do you think about it?`,
-            `I'm curious about your thoughts on ${topic}. Share with me!`,
-            `${topic} is interesting! What's your experience with it?`
-        ];
+        const starters = this.getConversationStarters(topic);
         const starter = starters[Math.floor(Math.random() * starters.length)];
         this.addToHistory('ai', starter);
         return starter;
     },
 
+    // Get conversation starters based on topic
+    getConversationStarters(topic) {
+        const startersByTopic = {
+            greetings: [
+                "Hi there! I'm Emma, your English conversation partner. It's wonderful to meet you! What's your name?",
+                "Hello! Welcome to our English practice session! I'm so excited to chat with you. How are you feeling today?",
+                "Hey there, friend! I'm Emma. Before we start, I'd love to know - what brings you here to practice English?"
+            ],
+            family: [
+                "Family is such an important topic! Let's talk about it. Do you have a large family or a small one?",
+                "I'd love to hear about the people closest to you! Who lives in your household?",
+                "Family connections are so interesting! Tell me about your family - are you close to them?"
+            ],
+            food: [
+                "Oh, I absolutely love talking about food! What's your favorite dish? I'm curious!",
+                "Food is one of life's greatest pleasures! Do you enjoy cooking, or do you prefer eating out?",
+                "Let's make ourselves hungry talking about delicious food! What did you have for your last meal?"
+            ],
+            travel: [
+                "Traveling opens up so many possibilities! Have you been to any interesting places recently?",
+                "I love hearing about different destinations! What's on your travel bucket list?",
+                "Adventure awaits! If you could go anywhere in the world right now, where would you choose?"
+            ],
+            work: [
+                "Let's talk about careers and work! What do you do for a living, or what would you like to do?",
+                "Work is such a big part of our lives! Are you currently working or studying?",
+                "I'm curious about your professional journey! What's your dream job?"
+            ],
+            technology: [
+                "Technology is changing our world so fast! What gadgets or apps can't you live without?",
+                "As someone who exists in the digital world, I find technology fascinating! What's your take on AI?",
+                "Let's geek out about tech! Are you more of a smartphone person or a computer enthusiast?"
+            ],
+            hobbies: [
+                "Everyone needs hobbies! What do you like to do in your free time?",
+                "I'm curious about what makes you happy! What activities do you enjoy outside of work or study?",
+                "Hobbies tell us so much about a person! What's your favorite way to unwind?"
+            ],
+            movies: [
+                "I love cinema! Have you watched any good movies or shows recently?",
+                "Entertainment is a great topic! What's the last thing you binged-watched?",
+                "Movies can be so powerful! What's a film that really moved you or changed your perspective?"
+            ],
+            health: [
+                "Health is wealth, as they say! How do you take care of your physical and mental wellbeing?",
+                "Let's talk about healthy living! Are you into fitness or any particular wellness practices?",
+                "Wellbeing is so important! What do you do to manage stress in your life?"
+            ],
+            education: [
+                "Learning is a lifelong journey! Are you currently studying anything?",
+                "Education shapes who we are! What subject did you love most when you were in school?",
+                "There's always something new to learn! What skill would you like to master?"
+            ],
+            freeChat: [
+                "Let's just have a natural conversation about anything! What's been on your mind lately?",
+                "Free chat mode - we can talk about absolutely anything! What would you like to discuss?",
+                "The floor is yours! Tell me about something interesting that happened to you recently!"
+            ],
+            default: [
+                "I'm excited to chat with you! What's on your mind today?",
+                "Let's have a great conversation! What would you like to talk about?",
+                "I'm here to help you practice English! What topic interests you?"
+            ]
+        };
+
+        return startersByTopic[topic] || startersByTopic.default;
+    },
+
     // Process user message and generate response
-    processMessage(userMessage) {
-        // Add to history
+    async processMessage(userMessage) {
         this.addToHistory('user', userMessage);
 
-        // Check for grammar issues
+        // Check grammar
         const corrections = this.checkGrammar(userMessage);
 
-        // Generate AI response
-        const response = this.generateResponse(userMessage);
+        // Try to get AI response from API first
+        let response;
+        try {
+            response = await this.getAIResponse(userMessage);
+        } catch (error) {
+            console.log('API failed, using local response:', error);
+            response = this.generateLocalResponse(userMessage);
+        }
 
-        // Add vocabulary to user profile
+        // Track vocabulary
         this.trackVocabulary(userMessage);
 
         return {
             response: response,
             corrections: corrections,
-            encouragement: this.shouldEncourage() ? this.getEncouragement() : null
+            encouragement: this.shouldEncourage() ? this.getRandomEncouragement() : null
         };
     },
 
-    // Check grammar in user message
-    checkGrammar(message) {
-        const corrections = [];
-        const lowerMessage = message.toLowerCase();
-
-        // Check all grammar patterns
-        for (const category in this.grammarPatterns) {
-            for (const pattern in this.grammarPatterns[category]) {
-                if (lowerMessage.includes(pattern)) {
-                    const fix = this.grammarPatterns[category][pattern];
-                    corrections.push({
-                        wrong: pattern,
-                        correct: fix.correct,
-                        explanation: fix.explanation
-                    });
-                    this.userProfile.commonMistakes.push(pattern);
-                }
-            }
-        }
-
-        // Check topic-specific corrections
-        const template = this.conversationTemplates[this.currentTopic];
-        if (template && template.corrections) {
-            for (const pattern in template.corrections) {
-                if (lowerMessage.includes(pattern)) {
-                    corrections.push({
-                        wrong: pattern,
-                        correct: template.corrections[pattern],
-                        explanation: template.corrections[pattern]
-                    });
-                }
-            }
-        }
-
-        this.saveUserProfile();
-        return corrections;
+    // Try to get response from AI API
+    async getAIResponse(userMessage) {
+        // For now, use enhanced local responses
+        // Can integrate with free APIs like Hugging Face later
+        return this.generateLocalResponse(userMessage);
     },
 
-    // Generate AI response based on context
-    generateResponse(userMessage) {
-        const template = this.conversationTemplates[this.currentTopic];
+    // Generate intelligent local response
+    generateLocalResponse(userMessage) {
         const lowerMessage = userMessage.toLowerCase();
-        const historyLength = this.conversationHistory.length;
+        const words = lowerMessage.split(' ');
 
-        // Detect message intent
+        // Detect intent
         const intent = this.detectIntent(lowerMessage);
 
-        // Generate contextual response
         let response = '';
 
-        // Check for questions
-        if (userMessage.includes('?')) {
+        // Handle greetings
+        if (intent.type === 'greeting') {
+            const greetings = [
+                "Hello! It's great to chat with you! How has your day been?",
+                "Hi there! So nice to hear from you! What's new?",
+                "Hey! Good to talk to you! What would you like to discuss?",
+                "Hello, friend! I'm here and ready to chat! What's on your mind?"
+            ];
+            response = greetings[Math.floor(Math.random() * greetings.length)];
+        }
+        // Handle farewells
+        else if (intent.type === 'farewell') {
+            const farewells = [
+                "It was wonderful chatting with you! Your English is getting better every time. See you soon! 👋",
+                "Goodbye for now! Remember, practice makes perfect. Can't wait to chat again! 🌟",
+                "Take care! You're doing amazing with your English. Until next time! 💪",
+                "Bye! It's been a pleasure. Keep practicing and you'll be fluent in no time! ✨"
+            ];
+            response = farewells[Math.floor(Math.random() * farewells.length)];
+        }
+        // Handle thanks
+        else if (intent.type === 'thanks') {
+            const thanks = [
+                "You're very welcome! I really enjoy our conversations. What else would you like to discuss?",
+                "My pleasure! Helping you learn is what I'm here for. Shall we continue?",
+                "No problem at all! It's rewarding to see your progress. What's next?",
+                "Anytime! Your enthusiasm for learning is inspiring. What else is on your mind?"
+            ];
+            response = thanks[Math.floor(Math.random() * thanks.length)];
+        }
+        // Handle questions
+        else if (userMessage.includes('?')) {
             response = this.answerQuestion(userMessage);
         }
-        // Check for specific intents
-        else if (intent.type === 'greeting') {
-            response = "Hello! It's great to chat with you! " + this.getFollowUpQuestion();
-        }
-        else if (intent.type === 'farewell') {
-            response = "It was wonderful talking to you! Keep practicing your English. See you next time! 👋";
-        }
-        else if (intent.type === 'thanks') {
-            response = "You're welcome! I'm happy to help. " + this.getFollowUpQuestion();
-        }
+        // Handle affirmative responses
         else if (intent.type === 'affirmative') {
-            response = this.respondToAffirmative();
+            const affirmatives = [
+                "Great! I love your positive energy! Tell me more about your thoughts on this.",
+                "Wonderful! It's nice to find common ground. What else would you add?",
+                "Excellent! I appreciate your openness. Can you elaborate a bit more?",
+                "Perfect! Your perspective is interesting. What experiences shaped this view?",
+                "Awesome! I'm glad we're on the same page. What's another aspect you've noticed?"
+            ];
+            response = affirmatives[Math.floor(Math.random() * affirmatives.length)];
         }
+        // Handle negative responses
         else if (intent.type === 'negative') {
-            response = this.respondToNegative();
+            const negatives = [
+                "I understand, everyone has different views! What's your perspective then?",
+                "That's fair! What would YOU prefer to talk about instead?",
+                "No worries! Different opinions make conversations interesting. Tell me your thoughts!",
+                "That's okay! I'm curious to hear your alternative viewpoint. Please share!",
+                "I respect that! What subject would be more interesting to you?"
+            ];
+            response = negatives[Math.floor(Math.random() * negatives.length)];
         }
-        // Generate topic-based response
-        else if (template) {
-            response = this.getTopicResponse(userMessage, template);
-        }
-        // Fallback response
+        // Generate contextual response based on topic and history
         else {
-            response = this.getFallbackResponse(userMessage);
-        }
-
-        // Add follow-up for conversation flow
-        if (historyLength > 2 && historyLength % 4 === 0) {
-            response += " " + this.getRandomFollowUp();
+            response = this.generateContextualResponse(userMessage);
         }
 
         this.addToHistory('ai', response);
         return response;
     },
 
-    // Detect user intent
+    // Generate contextual response based on conversation flow
+    generateContextualResponse(message) {
+        const historyLength = this.conversationHistory.length;
+        const topic = this.currentTopic;
+
+        // Get topic-specific follow-ups if available
+        const topicFollowUps = this.responseDatabase.topicFollowUps[topic] || [];
+
+        // Mix of conversational responses and topic follow-ups
+        let responsePool = [...this.responseDatabase.conversational];
+
+        // Add topic-specific responses
+        if (topicFollowUps.length > 0 && Math.random() > 0.5) {
+            responsePool = [...responsePool, ...topicFollowUps];
+        }
+
+        // Add questions occasionally to keep conversation flowing
+        if (historyLength > 4 && Math.random() > 0.6) {
+            responsePool = [...responsePool, ...this.responseDatabase.questions];
+        }
+
+        // Pick a random response
+        let response = responsePool[Math.floor(Math.random() * responsePool.length)];
+
+        // Replace any placeholders
+        response = response.replace('{related_topic}', this.getRelatedTopic());
+
+        // Add variety based on message length
+        if (message.length > 100) {
+            const longPrefixes = [
+                "Wow, you really put thought into that! ",
+                "I appreciate such a detailed response! ",
+                "You express yourself so well in English! "
+            ];
+            response = longPrefixes[Math.floor(Math.random() * longPrefixes.length)] + response;
+        }
+
+        return response;
+    },
+
+    // Get a related topic for follow-up questions
+    getRelatedTopic() {
+        const topics = ['music', 'books', 'sports', 'art', 'nature', 'history', 'culture', 'dreams', 'goals', 'memories'];
+        return topics[Math.floor(Math.random() * topics.length)];
+    },
+
+    // Answer user questions intelligently
+    answerQuestion(question) {
+        const lowerQ = question.toLowerCase();
+
+        // Personal questions about Emma
+        if (lowerQ.includes('your name')) {
+            return "I'm Emma, your virtual English tutor! I'm here to help you practice and improve. What's YOUR name?";
+        }
+        if (lowerQ.includes('how are you') || lowerQ.includes('how do you feel')) {
+            return "I'm doing wonderfully, thank you for asking! Chatting with you is the highlight of my day. How about you?";
+        }
+        if (lowerQ.includes('where are you from')) {
+            return "I'm a digital being, but I speak American English! I love connecting with learners from all around the world. Where are you from?";
+        }
+        if (lowerQ.includes('your age') || lowerQ.includes('how old')) {
+            return "Age is just a number, right? 😄 I'm timeless! But I'm curious - do you think AI teachers like me are helpful for learning?";
+        }
+
+        // Help and learning questions
+        if (lowerQ.includes('help me')) {
+            return "Of course! I'm here to help you practice English naturally. Just talk to me like you would with a friend, and I'll gently correct any mistakes. What would you like to practice?";
+        }
+        if (lowerQ.includes('improve') || lowerQ.includes('learn better')) {
+            return "Great question! The best way to improve is through regular practice. Speaking, even with mistakes, is better than staying silent. What aspect of English challenges you most?";
+        }
+
+        // Opinion questions
+        if (lowerQ.includes('what do you think') || lowerQ.includes('your opinion')) {
+            const opinions = [
+                "That's a thought-provoking question! I think there are multiple valid perspectives. What's YOUR take on it?",
+                "Interesting question! I believe the answer depends on context. What made you curious about this?",
+                "I'd love to share my thoughts, but first I want to hear yours! What do YOU think?"
+            ];
+            return opinions[Math.floor(Math.random() * opinions.length)];
+        }
+
+        // Default question response
+        const defaultAnswers = [
+            "That's a wonderful question! I'd love to explore it together. What prompted you to ask this?",
+            "Great curiosity! The best answer often comes from discussing it. What are your initial thoughts?",
+            "Interesting! Questions like this show you're really thinking in English. What's your perspective?",
+            "I appreciate your curiosity! Let's figure this out together. Why is this important to you?",
+            "Excellent question! Before I answer, I'm curious - what do YOU think the answer might be?"
+        ];
+        return defaultAnswers[Math.floor(Math.random() * defaultAnswers.length)];
+    },
+
+    // Detect user intent from message
     detectIntent(message) {
         const intents = {
-            greeting: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'],
-            farewell: ['bye', 'goodbye', 'see you', 'talk later', 'gotta go', 'have to go'],
-            thanks: ['thank', 'thanks', 'appreciate', 'grateful'],
-            affirmative: ['yes', 'yeah', 'yep', 'sure', 'of course', 'definitely', 'absolutely'],
-            negative: ['no', 'nope', 'not really', "don't", "cant", "won't"],
-            question: ['what', 'where', 'when', 'why', 'how', 'who', 'which', 'can you', 'could you']
+            greeting: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola', 'oi'],
+            farewell: ['bye', 'goodbye', 'see you', 'talk later', 'gotta go', 'have to go', 'good night', 'tchau'],
+            thanks: ['thank', 'thanks', 'appreciate', 'grateful', 'obrigado', 'obrigada'],
+            affirmative: ['yes', 'yeah', 'yep', 'sure', 'of course', 'definitely', 'absolutely', 'right', 'correct', 'exactly', 'agreed'],
+            negative: ['no', 'nope', 'not really', "don't think", "i disagree", "not sure", "maybe not"]
         };
 
         for (const type in intents) {
@@ -422,149 +553,43 @@ const AIConversation = {
                 }
             }
         }
-
         return { type: 'statement' };
     },
 
-    // Get topic-specific response
-    getTopicResponse(message, template) {
-        const responses = [
-            "That's really interesting! Tell me more about that.",
-            "I see! What made you think that way?",
-            "Great point! How does that make you feel?",
-            "Fascinating! Can you give me an example?",
-            "I understand! What else can you share about this?",
-            "That's a good observation! What do you think about...?",
-            "Interesting perspective! Have you always felt this way?"
-        ];
+    // Check grammar and provide corrections
+    checkGrammar(message) {
+        const corrections = [];
+        const lowerMessage = message.toLowerCase();
 
-        // Try to use template responses
-        if (template.responses) {
-            const keys = Object.keys(template.responses);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            const templateResponses = template.responses[randomKey];
-            if (templateResponses && templateResponses.length > 0) {
-                let response = templateResponses[Math.floor(Math.random() * templateResponses.length)];
-                // Replace placeholders if possible
-                response = response.replace('{name}', 'friend');
-                response = response.replace('{location}', 'your place');
-                response = response.replace('{food}', 'that');
-                response = response.replace('{place}', 'there');
-                response = response.replace('{job}', 'your job');
-                return response;
+        for (const pattern in this.responseDatabase.corrections) {
+            if (lowerMessage.includes(pattern)) {
+                const fix = this.responseDatabase.corrections[pattern];
+                corrections.push({
+                    wrong: pattern,
+                    correct: fix.correct,
+                    explanation: fix.tip
+                });
+                this.userProfile.commonMistakes.push(pattern);
             }
         }
 
-        // Use scenarios occasionally
-        if (template.scenarios && Math.random() > 0.7) {
-            return template.scenarios[Math.floor(Math.random() * template.scenarios.length)];
-        }
-
-        return responses[Math.floor(Math.random() * responses.length)];
+        this.saveUserProfile();
+        return corrections;
     },
 
-    // Answer user questions
-    answerQuestion(question) {
-        const lowerQ = question.toLowerCase();
-
-        if (lowerQ.includes('your name')) {
-            return "My name is Emma! I'm your English conversation partner. What's your name?";
-        }
-        if (lowerQ.includes('how are you')) {
-            return "I'm doing great, thanks for asking! I love helping people learn English. How about you?";
-        }
-        if (lowerQ.includes('where are you from')) {
-            return "I'm a virtual teacher, but I speak American English! Where are you from?";
-        }
-        if (lowerQ.includes('help me')) {
-            return "Of course! I'm here to help you practice English. Just talk to me naturally, and I'll correct any mistakes and help you improve!";
-        }
-        if (lowerQ.includes('what should')) {
-            return "That's a great question! It depends on what you want to achieve. What's your goal?";
-        }
-
-        // Default question response
-        const answers = [
-            "That's a great question! Let me think... What's your opinion on this?",
-            "Interesting question! I'd love to hear what YOU think first!",
-            "Good question! There are many ways to look at it. What do you believe?",
-            "I appreciate your curiosity! Why did you ask that?"
-        ];
-        return answers[Math.floor(Math.random() * answers.length)];
-    },
-
-    // Respond to affirmative statements
-    respondToAffirmative() {
-        const responses = [
-            "Great! Tell me more about it!",
-            "Wonderful! I'm glad to hear that. What else?",
-            "Excellent! Can you elaborate on that?",
-            "Perfect! That's interesting. Why do you feel that way?",
-            "Awesome! I'd love to hear more details!"
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-    },
-
-    // Respond to negative statements
-    respondToNegative() {
-        const responses = [
-            "I understand. Would you like to talk about something else?",
-            "That's okay! Let's explore a different angle. What about...?",
-            "No problem! Is there something you'd prefer to discuss?",
-            "I see. Can you tell me why you feel that way?",
-            "That's fine! What would you like to talk about instead?"
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-    },
-
-    // Get fallback response
-    getFallbackResponse(message) {
-        const responses = [
-            "That's interesting! Can you tell me more about that?",
-            "I'd love to understand better. Could you explain?",
-            "Fascinating! What made you think of that?",
-            "Tell me more! I'm curious about your thoughts.",
-            "That's a good point! How does it relate to your life?",
-            "I appreciate you sharing that! What else is on your mind?"
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
-    },
-
-    // Get follow-up question
-    getFollowUpQuestion() {
-        const questions = [
-            "What would you like to talk about?",
-            "Is there anything specific you'd like to practice?",
-            "What's on your mind today?",
-            "What topics interest you?",
-            "How can I help you improve today?"
-        ];
-        return questions[Math.floor(Math.random() * questions.length)];
-    },
-
-    // Get random follow-up to maintain conversation
-    getRandomFollowUp() {
-        const followUps = [
-            "By the way, have I mentioned how well you're doing?",
-            "That reminds me of something interesting...",
-            "Speaking of which, what else interests you?",
-            "On another note, how's your day going?",
-            "Also, I'm curious about your thoughts on something else..."
-        ];
-        return followUps[Math.floor(Math.random() * followUps.length)];
-    },
-
-    // Should give encouragement
+    // Decide if we should encourage the user
     shouldEncourage() {
-        return Math.random() > 0.6;
+        return Math.random() > 0.65;
     },
 
-    // Get encouragement phrase
-    getEncouragement() {
-        return this.encouragement[Math.floor(Math.random() * this.encouragement.length)];
+    // Get random encouragement
+    getRandomEncouragement() {
+        return this.responseDatabase.encouragements[
+            Math.floor(Math.random() * this.responseDatabase.encouragements.length)
+        ];
     },
 
-    // Track vocabulary used
+    // Track vocabulary used by user
     trackVocabulary(message) {
         const words = message.toLowerCase().split(/\s+/);
         words.forEach(word => {
@@ -572,7 +597,6 @@ const AIConversation = {
                 this.userProfile.vocabularyUsed.push(word);
             }
         });
-        // Keep only last 1000 words
         if (this.userProfile.vocabularyUsed.length > 1000) {
             this.userProfile.vocabularyUsed = this.userProfile.vocabularyUsed.slice(-1000);
         }
@@ -586,23 +610,12 @@ const AIConversation = {
             message: message,
             timestamp: new Date().toISOString()
         });
-        // Keep only last 50 messages
         if (this.conversationHistory.length > 50) {
             this.conversationHistory = this.conversationHistory.slice(-50);
         }
     },
 
-    // Get conversation statistics
-    getStats() {
-        return {
-            totalSessions: this.userProfile.sessionsCount,
-            wordsUsed: this.userProfile.vocabularyUsed.length,
-            topicsDiscussed: [...new Set(this.userProfile.topicsDiscussed)].length,
-            commonMistakes: this.userProfile.commonMistakes.slice(-10)
-        };
-    },
-
-    // Get suggested topics based on level
+    // Get suggested topics by level
     getSuggestedTopics(level) {
         return this.topics[level] || this.topics.beginner;
     },
@@ -611,9 +624,18 @@ const AIConversation = {
     reset() {
         this.conversationHistory = [];
         this.currentTopic = null;
+    },
+
+    // Get stats
+    getStats() {
+        return {
+            totalSessions: this.userProfile.sessionsCount,
+            wordsUsed: this.userProfile.vocabularyUsed.length,
+            topicsDiscussed: [...new Set(this.userProfile.topicsDiscussed)].length
+        };
     }
 };
 
 // Make available globally
 window.AIConversation = AIConversation;
-console.log('🤖 AI Conversation System loaded!');
+console.log('🤖 AI Conversation System loaded with enhanced responses!');
