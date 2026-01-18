@@ -744,6 +744,82 @@
     <script src="infinite-generator.js"></script>
     <script src="ai-conversation.js"></script>
     <script src="app.js"></script>
+
+    <!-- Fallback: ensure initConversation exists even with cached app.js -->
+    <script>
+        if (typeof initConversation === 'undefined') {
+            let selectedConversationLevel = 'beginner';
+
+            window.initConversation = function () {
+                if (typeof AIConversation !== 'undefined') {
+                    AIConversation.init();
+                    loadTopics(selectedConversationLevel);
+                }
+            };
+
+            window.selectConversationLevel = function (level) {
+                selectedConversationLevel = level;
+                document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+                const btn = document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1));
+                if (btn) btn.classList.add('active');
+                loadTopics(level);
+            };
+
+            window.loadTopics = function (level) {
+                const topicGrid = document.getElementById('topicGrid');
+                if (!topicGrid || typeof AIConversation === 'undefined') return;
+                const topics = AIConversation.getSuggestedTopics(level);
+                topicGrid.innerHTML = topics.map(topic => `
+                <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
+                    <span class="topic-icon">${topic.icon}</span>
+                    <span class="topic-name">${topic.name}</span>
+                </div>
+            `).join('');
+            };
+
+            window.startConversationTopic = function (topicId) {
+                document.getElementById('conversationSetup').classList.add('hidden');
+                document.getElementById('chatContainer').classList.remove('hidden');
+                document.getElementById('chatMessages').innerHTML = '';
+                const msg = AIConversation.startConversation(topicId, selectedConversationLevel);
+                addChatMessage('ai', msg);
+                if (document.getElementById('autoSpeak')?.checked) setTimeout(() => speak(msg), 500);
+            };
+
+            window.addChatMessage = function (role, message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const div = document.createElement('div');
+                div.className = `chat-message ${role}-message`;
+                const safe = message.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                div.innerHTML = role === 'ai'
+                    ? `<div class="message-avatar">👩‍🏫</div><div class="message-content"><div class="message-text">${message}</div><button class="btn-speak-msg" onclick="speak('${safe}')">🔊</button></div>`
+                    : `<div class="message-content"><div class="message-text">${message}</div></div><div class="message-avatar">👤</div>`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            };
+
+            window.sendChatMessage = async function () {
+                const input = document.getElementById('chatInput');
+                const msg = input.value.trim();
+                if (!msg) return;
+                addChatMessage('user', msg);
+                input.value = '';
+                const result = await AIConversation.processMessage(msg);
+                if (result.corrections?.length && document.getElementById('showCorrections')?.checked) {
+                    const el = document.getElementById('grammarCorrection');
+                    if (el) { el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 8000); }
+                }
+                setTimeout(() => {
+                    addChatMessage('ai', result.response);
+                    if (document.getElementById('autoSpeak')?.checked) speak(result.response);
+                }, 600);
+            };
+
+            window.handleChatKeyPress = function (e) { if (e.key === 'Enter') sendChatMessage(); };
+
+            console.log('✅ AI Chat fallback functions loaded!');
+        }
+    </script>
 </body>
 
 </html>
