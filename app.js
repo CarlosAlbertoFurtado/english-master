@@ -455,11 +455,22 @@ function loadSpeaking() {
 }
 
 function startRecording() {
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('recordingStatus');
+
+    // Detect iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     // Check if browser supports speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-        showToast('❌ Seu navegador não suporta reconhecimento de voz. Use Chrome, Edge ou Safari.', 'error');
+        if (isIOS) {
+            showToast('📱 No iPhone, o reconhecimento de voz funciona melhor no Safari. Abra este link no Safari.', 'error');
+        } else {
+            showToast('❌ Seu navegador não suporta reconhecimento de voz. Use Chrome, Edge ou Safari.', 'error');
+        }
         return;
     }
 
@@ -469,124 +480,163 @@ function startRecording() {
         return;
     }
 
-    const btn = document.getElementById('micBtn');
-    const status = document.getElementById('recordingStatus');
+    // Function to start recognition after permission
+    function initRecognition() {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-    // Request microphone permission first
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            // Stop the stream immediately, we just needed permission
-            stream.getTracks().forEach(track => track.stop());
+        btn.classList.add('recording');
+        status.classList.remove('hidden');
+        status.textContent = '🔴 Gravando... Fale agora!';
 
-            // Now start speech recognition
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            btn.classList.add('recording');
-            status.classList.remove('hidden');
-            status.textContent = '🔴 Gravando... Fale agora!';
-
+        try {
             recognition.start();
             showToast('🎤 Microfone ativado! Fale a frase em inglês.', 'info');
-
-            // Timeout if no speech detected
-            const timeout = setTimeout(() => {
-                recognition.stop();
-                showToast('⏰ Tempo esgotado. Tente novamente.', 'warning');
-            }, 10000);
-
-            recognition.onresult = (event) => {
-                clearTimeout(timeout);
-                const spoken = event.results[0][0].transcript;
-                const confidence = event.results[0][0].confidence;
-                const target = document.getElementById('speakingPhrase').textContent;
-                const result = document.getElementById('speakingResult');
-                result.classList.remove('hidden', 'result-correct', 'result-incorrect');
-
-                const sim = similarity(spoken.toLowerCase(), target.toLowerCase());
-                state.totalQuizzes++;
-
-                if (sim > 0.7) {
-                    result.classList.add('result-correct');
-                    result.innerHTML = `✅ Excelente! (${Math.round(sim * 100)}% similar)<br>
-                        🎤 Você disse: "${spoken}"<br>
-                        📊 Confiança: ${Math.round(confidence * 100)}%`;
-                    state.correctAnswers++;
-                    state.wordsToday++;
-                } else if (sim > 0.5) {
-                    result.classList.add('result-incorrect');
-                    result.innerHTML = `🟡 Quase lá! (${Math.round(sim * 100)}% similar)<br>
-                        🎤 Você disse: "${spoken}"<br>
-                        📝 Esperado: "${target}"`;
-                } else {
-                    result.classList.add('result-incorrect');
-                    result.innerHTML = `🔄 Tente novamente<br>
-                        🎤 Você disse: "${spoken}"<br>
-                        📝 Esperado: "${target}"`;
-                }
-                updateDashboard();
-                saveState();
-            };
-
-            recognition.onend = () => {
-                clearTimeout(timeout);
-                btn.classList.remove('recording');
-                status.classList.add('hidden');
-            };
-
-            recognition.onerror = (event) => {
-                clearTimeout(timeout);
-                btn.classList.remove('recording');
-                status.classList.add('hidden');
-
-                let errorMsg = 'Erro no reconhecimento de voz';
-                switch (event.error) {
-                    case 'no-speech':
-                        errorMsg = '🔇 Nenhuma fala detectada. Fale mais alto!';
-                        break;
-                    case 'audio-capture':
-                        errorMsg = '🎤 Microfone não encontrado. Verifique se está conectado.';
-                        break;
-                    case 'not-allowed':
-                        errorMsg = '🚫 Permissão de microfone negada. Ative nas configurações do navegador.';
-                        break;
-                    case 'network':
-                        errorMsg = '🌐 Erro de rede. Verifique sua conexão.';
-                        break;
-                    case 'aborted':
-                        errorMsg = '⏹️ Gravação cancelada.';
-                        break;
-                    default:
-                        errorMsg = `❌ Erro: ${event.error}`;
-                }
-                showToast(errorMsg, 'error');
-            };
-
-            recognition.onspeechstart = () => {
-                status.textContent = '🎙️ Ouvindo sua voz...';
-            };
-
-            recognition.onspeechend = () => {
-                status.textContent = '⏳ Processando...';
-            };
-        })
-        .catch(err => {
-            console.error('Microphone error:', err);
-            let errorMsg = '🎤 Não foi possível acessar o microfone.';
-
-            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                errorMsg = '🚫 Permissão de microfone negada. Clique no ícone de cadeado/câmera na barra de endereço e permita o acesso.';
-            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-                errorMsg = '🎤 Nenhum microfone encontrado. Conecte um microfone e tente novamente.';
-            } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-                errorMsg = '⚠️ Microfone em uso por outro app. Feche outros apps e tente novamente.';
+        } catch (e) {
+            btn.classList.remove('recording');
+            status.classList.add('hidden');
+            if (isIOS) {
+                showToast('📱 iPhone: Vá em Ajustes > Safari > Microfone e permita para este site.', 'error');
+            } else {
+                showToast('❌ Erro ao iniciar gravação: ' + e.message, 'error');
             }
+            return;
+        }
 
+        // Timeout if no speech detected (longer for iOS)
+        const timeoutDuration = isIOS ? 15000 : 10000;
+        const timeout = setTimeout(() => {
+            try { recognition.stop(); } catch (e) { }
+            showToast('⏰ Tempo esgotado. Toque no microfone e fale novamente.', 'warning');
+        }, timeoutDuration);
+
+        recognition.onresult = (event) => {
+            clearTimeout(timeout);
+            const spoken = event.results[0][0].transcript;
+            const confidence = event.results[0][0].confidence || 0.8; // iOS sometimes doesn't provide confidence
+            const target = document.getElementById('speakingPhrase').textContent;
+            const result = document.getElementById('speakingResult');
+            result.classList.remove('hidden', 'result-correct', 'result-incorrect');
+
+            const sim = similarity(spoken.toLowerCase(), target.toLowerCase());
+            state.totalQuizzes++;
+
+            if (sim > 0.7) {
+                result.classList.add('result-correct');
+                result.innerHTML = `✅ Excelente! (${Math.round(sim * 100)}% similar)<br>
+                    🎤 Você disse: "${spoken}"<br>
+                    📊 Confiança: ${Math.round(confidence * 100)}%`;
+                state.correctAnswers++;
+                state.wordsToday++;
+            } else if (sim > 0.5) {
+                result.classList.add('result-incorrect');
+                result.innerHTML = `🟡 Quase lá! (${Math.round(sim * 100)}% similar)<br>
+                    🎤 Você disse: "${spoken}"<br>
+                    📝 Esperado: "${target}"`;
+            } else {
+                result.classList.add('result-incorrect');
+                result.innerHTML = `🔄 Tente novamente<br>
+                    🎤 Você disse: "${spoken}"<br>
+                    📝 Esperado: "${target}"`;
+            }
+            updateDashboard();
+            saveState();
+        };
+
+        recognition.onend = () => {
+            clearTimeout(timeout);
+            btn.classList.remove('recording');
+            status.classList.add('hidden');
+        };
+
+        recognition.onerror = (event) => {
+            clearTimeout(timeout);
+            btn.classList.remove('recording');
+            status.classList.add('hidden');
+
+            let errorMsg = 'Erro no reconhecimento de voz';
+            switch (event.error) {
+                case 'no-speech':
+                    errorMsg = '🔇 Nenhuma fala detectada. Fale mais alto e perto do microfone!';
+                    break;
+                case 'audio-capture':
+                    if (isIOS) {
+                        errorMsg = '📱 iPhone: Vá em Ajustes > Safari > Microfone e permita o acesso.';
+                    } else {
+                        errorMsg = '🎤 Microfone não encontrado. Verifique se está conectado.';
+                    }
+                    break;
+                case 'not-allowed':
+                    if (isIOS) {
+                        errorMsg = '� iPhone: Permita o microfone em Ajustes > Safari > Microfone, ou toque em "Aa" na barra de endereço > Configurações do Site.';
+                    } else {
+                        errorMsg = '🚫 Permissão negada. Clique no cadeado na barra de endereço e permita o microfone.';
+                    }
+                    break;
+                case 'network':
+                    errorMsg = '🌐 Erro de rede. Verifique sua conexão com a internet.';
+                    break;
+                case 'aborted':
+                    errorMsg = '⏹️ Gravação cancelada.';
+                    break;
+                case 'service-not-allowed':
+                    if (isIOS) {
+                        errorMsg = '📱 iPhone: Ative "Siri e Ditado" em Ajustes > Siri e Busca para usar o reconhecimento de voz.';
+                    } else {
+                        errorMsg = '❌ Serviço de reconhecimento não disponível.';
+                    }
+                    break;
+                default:
+                    errorMsg = `❌ Erro: ${event.error}. ${isIOS ? 'Tente reiniciar o Safari.' : ''}`;
+            }
             showToast(errorMsg, 'error');
-        });
+        };
+
+        recognition.onspeechstart = () => {
+            status.textContent = '🎙️ Ouvindo sua voz...';
+        };
+
+        recognition.onspeechend = () => {
+            status.textContent = '⏳ Processando...';
+        };
+    }
+
+    // iOS Safari doesn't need getUserMedia for speech recognition
+    // In fact, calling getUserMedia first can cause issues on iOS
+    if (isIOS || isSafari) {
+        // For iOS/Safari, start recognition directly
+        initRecognition();
+    } else {
+        // For other browsers, request microphone permission first
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Stop the stream immediately, we just needed permission
+                    stream.getTracks().forEach(track => track.stop());
+                    initRecognition();
+                })
+                .catch(err => {
+                    console.error('Microphone error:', err);
+                    let errorMsg = '🎤 Não foi possível acessar o microfone.';
+
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        errorMsg = '🚫 Permissão de microfone negada. Clique no cadeado na barra de endereço e permita o acesso.';
+                    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        errorMsg = '🎤 Nenhum microfone encontrado. Conecte um microfone e tente novamente.';
+                    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                        errorMsg = '⚠️ Microfone em uso por outro app. Feche outros apps e tente novamente.';
+                    }
+
+                    showToast(errorMsg, 'error');
+                });
+        } else {
+            // Fallback: try to start recognition directly
+            initRecognition();
+        }
+    }
 }
 
 function nextSpeaking() {
