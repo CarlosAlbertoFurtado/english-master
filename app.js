@@ -285,10 +285,124 @@ function speakWord() {
 }
 
 function speak(text, lang = 'en-US') {
+    // Check if speech synthesis is available
+    if (!('speechSynthesis' in window)) {
+        showToast('🔇 Seu navegador não suporta áudio. Tente Chrome ou Safari.', 'error');
+        return;
+    }
+
+    // Detect iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    // iOS workaround: Cancel any previous speech first
+    speechSynthesis.cancel();
+
+    // Create utterance
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
-    utterance.rate = 0.9;
-    speechSynthesis.speak(utterance);
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    // Try to find an English voice
+    let voices = speechSynthesis.getVoices();
+
+    // iOS sometimes needs voices to load asynchronously
+    if (voices.length === 0 && isIOS) {
+        // Voices not loaded yet, wait for them
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            setVoiceAndSpeak();
+        };
+        // Also try to speak anyway (iOS fallback)
+        setTimeout(() => {
+            if (voices.length === 0) {
+                try {
+                    speechSynthesis.speak(utterance);
+                } catch (e) {
+                    console.warn('Speech failed:', e);
+                }
+            }
+        }, 100);
+    } else {
+        setVoiceAndSpeak();
+    }
+
+    function setVoiceAndSpeak() {
+        // Find best English voice
+        const englishVoice = voices.find(v =>
+            v.lang.startsWith('en') && v.localService
+        ) || voices.find(v =>
+            v.lang.startsWith('en')
+        ) || voices.find(v =>
+            v.lang === 'en-US'
+        );
+
+        if (englishVoice) {
+            utterance.voice = englishVoice;
+        }
+
+        // Error handling
+        utterance.onerror = (event) => {
+            console.error('Speech error:', event.error);
+            if (event.error === 'not-allowed') {
+                if (isIOS) {
+                    showToast('📱 iPhone: Toque na tela primeiro para ativar o áudio.', 'warning');
+                } else {
+                    showToast('🔇 Áudio bloqueado. Interaja com a página primeiro.', 'warning');
+                }
+            }
+        };
+
+        // iOS workaround: Speak needs user gesture, so wrap in try-catch
+        try {
+            speechSynthesis.speak(utterance);
+
+            // iOS bug: Sometimes speech stops mid-sentence, resume it
+            if (isIOS) {
+                const resumeInfinity = setInterval(() => {
+                    if (!speechSynthesis.speaking) {
+                        clearInterval(resumeInfinity);
+                    } else {
+                        speechSynthesis.pause();
+                        speechSynthesis.resume();
+                    }
+                }, 5000);
+
+                utterance.onend = () => {
+                    clearInterval(resumeInfinity);
+                };
+            }
+        } catch (e) {
+            console.warn('Speech synthesis error:', e);
+            if (isIOS) {
+                showToast('📱 iPhone: Toque em qualquer botão primeiro para ativar o áudio.', 'warning');
+            }
+        }
+    }
+}
+
+// iOS audio wake-up: Initialize speech on first touch
+let audioInitialized = false;
+document.addEventListener('touchstart', initAudioForIOS, { once: true });
+document.addEventListener('click', initAudioForIOS, { once: true });
+
+function initAudioForIOS() {
+    if (audioInitialized) return;
+    audioInitialized = true;
+
+    // Wake up speech synthesis with empty utterance
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance('');
+        utterance.volume = 0;
+        speechSynthesis.speak(utterance);
+        speechSynthesis.cancel();
+
+        // Pre-load voices
+        speechSynthesis.getVoices();
+    }
+
+    console.log('🔊 Audio initialized for iOS');
 }
 
 function nextWord() {
