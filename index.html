@@ -98,7 +98,7 @@
                     <button class="btn btn-outline" onclick="showSection('infinite')">
                         <span>♾️</span> Modo Infinito
                     </button>
-                    <button class="btn btn-primary glow-btn" onclick="showSection('conversation')">
+                    <button class="btn btn-primary glow-btn" onclick="openAIChat()">
                         <span>🤖</span> Conversar com IA
                     </button>
                     <button class="btn btn-outline share-btn" onclick="ShareApp.shareApp()">
@@ -819,6 +819,36 @@
 
             console.log('✅ AI Chat fallback functions loaded!');
         }
+
+        // ALWAYS define openAIChat - this bypasses any cached showSection issues
+        window.openAIChat = function () {
+            // Hide all other sections
+            const sections = ['heroSection', 'levelSection', 'vocabularySection', 'phrasesSection',
+                'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'progressDashboard'];
+            sections.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Show conversation section
+            const convSection = document.getElementById('conversationSection');
+            if (convSection) {
+                convSection.classList.remove('hidden');
+                convSection.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Initialize if available
+            if (typeof initConversation === 'function') {
+                initConversation();
+            } else if (typeof AIConversation !== 'undefined') {
+                AIConversation.init();
+                if (typeof loadTopics === 'function') {
+                    loadTopics('beginner');
+                }
+            }
+        };
+
+        console.log('🚀 openAIChat function ready!');
     </script>
 </body>
 
