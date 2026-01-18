@@ -1,5 +1,6 @@
 // ===== VOCABULARY COMPILER =====
 // This file combines all vocabulary into a single structure for use in the app
+// Now with 2000+ words from multiple sources!
 
 // Wait for DOM to be ready, then compile vocabulary
 (function () {
@@ -27,6 +28,19 @@
     // From vocabulary-misc.js
     if (typeof moreWordsVocabulary !== 'undefined') {
         beginnerWords.push(...moreWordsVocabulary);
+    }
+
+    // NEW: From vocabulary-mega-1.js (Home & Kitchen)
+    if (typeof homeVocabulary !== 'undefined') {
+        beginnerWords.push(...homeVocabulary);
+    }
+
+    // NEW: From vocabulary-mega-2.js (Animals & Nature)
+    if (typeof animalsVocabulary2 !== 'undefined') {
+        beginnerWords.push(...animalsVocabulary2);
+    }
+    if (typeof natureVocabulary2 !== 'undefined') {
+        beginnerWords.push(...natureVocabulary2);
     }
 
     // Compile intermediate level - verbs, adjectives, professions, etc
@@ -67,6 +81,14 @@
     }
     if (typeof relationshipsVocabulary !== 'undefined') {
         intermediateWords.push(...relationshipsVocabulary);
+    }
+
+    // NEW: From vocabulary-mega-3.js (Clothing & Transport)
+    if (typeof clothingVocabulary2 !== 'undefined') {
+        intermediateWords.push(...clothingVocabulary2);
+    }
+    if (typeof transportVocabulary2 !== 'undefined') {
+        intermediateWords.push(...transportVocabulary2);
     }
 
     // Compile advanced level - business, entertainment, technology, etc

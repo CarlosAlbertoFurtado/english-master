@@ -408,14 +408,39 @@
 
             <div class="infinite-modes">
                 <div class="practice-card" onclick="startInfiniteVocab()">
-                    <div class="practice-icon">📚</div>
-                    <h3>Vocabulário Infinito</h3>
+                    <div class="practice-icon">🌐</div>
+                    <h3>Vocabulário Online</h3>
                     <p>Palavras novas da internet</p>
+                </div>
+                <div class="practice-card" onclick="startLocalVocab()">
+                    <div class="practice-icon">📚</div>
+                    <h3>Vocabulário Local</h3>
+                    <p>3000+ palavras offline</p>
                 </div>
                 <div class="practice-card" onclick="startInfiniteQuiz()">
                     <div class="practice-icon">🧠</div>
                     <h3>Quiz Infinito</h3>
                     <p>Perguntas sempre novas</p>
+                </div>
+                <div class="practice-card" onclick="startLocalQuiz()">
+                    <div class="practice-icon">📝</div>
+                    <h3>Quiz Rápido</h3>
+                    <p>Quiz offline instantâneo</p>
+                </div>
+                <div class="practice-card" onclick="startFillBlanks()">
+                    <div class="practice-icon">✏️</div>
+                    <h3>Complete a Frase</h3>
+                    <p>Preencha as lacunas</p>
+                </div>
+                <div class="practice-card" onclick="showWordOfDay()">
+                    <div class="practice-icon">📅</div>
+                    <h3>Palavra do Dia</h3>
+                    <p>Aprenda diariamente</p>
+                </div>
+                <div class="practice-card" onclick="startSynonyms()">
+                    <div class="practice-icon">🔄</div>
+                    <h3>Sinônimos</h3>
+                    <p>Palavras similares</p>
                 </div>
                 <div class="practice-card" onclick="loadRandomQuote()">
                     <div class="practice-icon">💭</div>
@@ -443,10 +468,47 @@
                     <button class="btn btn-audio" onclick="speakInfiniteWord()">🔊 Ouvir</button>
                     <button class="btn btn-primary" onclick="nextInfiniteWord()">Próxima Palavra →</button>
                 </div>
+                <div id="localWordCard" class="infinite-word-card hidden">
+                    <span class="infinite-category" id="localCategory">Word</span>
+                    <h2 class="infinite-word" id="localWord">Loading...</h2>
+                    <p class="infinite-phonetic" id="localPhonetic"></p>
+                    <p class="infinite-definition" id="localTranslation"></p>
+                    <p class="infinite-example" id="localExample"></p>
+                    <button class="btn btn-audio" onclick="speakLocalWord()">🔊 Ouvir</button>
+                    <button class="btn btn-primary" onclick="nextLocalWord()">Próxima Palavra →</button>
+                </div>
                 <div id="infiniteQuizCard" class="infinite-quiz-card hidden">
                     <h3 id="infiniteQuizQuestion">Question</h3>
                     <div id="infiniteQuizOptions" class="quiz-options"></div>
                     <button class="btn btn-secondary" onclick="nextInfiniteQuiz()">Próxima Pergunta →</button>
+                </div>
+                <div id="localQuizCard" class="infinite-quiz-card hidden">
+                    <h3 id="localQuizQuestion">Question</h3>
+                    <div id="localQuizOptions" class="quiz-options"></div>
+                    <button class="btn btn-secondary" onclick="nextLocalQuiz()">Próxima Pergunta →</button>
+                </div>
+                <div id="fillBlankCard" class="infinite-word-card hidden">
+                    <h3>Complete a Frase:</h3>
+                    <p class="fill-sentence" id="fillSentence">Loading...</p>
+                    <p class="fill-hint" id="fillHint">💡 Dica: ...</p>
+                    <input type="text" class="fill-input" id="fillInput" placeholder="Digite a palavra...">
+                    <button class="btn btn-primary" onclick="checkFillBlank()">Verificar</button>
+                    <div id="fillResult" class="fill-result hidden"></div>
+                    <button class="btn btn-secondary" onclick="nextFillBlank()">Próxima →</button>
+                </div>
+                <div id="wordOfDayCard" class="infinite-word-card hidden">
+                    <span class="wod-date" id="wodDate">📅 Data</span>
+                    <h2 class="infinite-word" id="wodWord">Word</h2>
+                    <p class="infinite-definition" id="wodTranslation">Translation</p>
+                    <button class="btn btn-audio" onclick="speakWOD()">🔊 Ouvir</button>
+                </div>
+                <div id="synonymCard" class="infinite-word-card hidden">
+                    <h3>Sinônimos de:</h3>
+                    <h2 class="infinite-word" id="synonymWord">Word</h2>
+                    <div class="synonym-list" id="synonymList"></div>
+                    <h4>Antônimo:</h4>
+                    <p class="antonym" id="antonymWord">Antonym</p>
+                    <button class="btn btn-primary" onclick="nextSynonym()">Próxima Palavra →</button>
                 </div>
                 <div id="quoteCard" class="quote-card hidden">
                     <blockquote id="quoteText">"Quote"</blockquote>
@@ -558,11 +620,17 @@
     <script src="vocabulary-misc.js"></script>
     <script src="vocabulary-food-health.js"></script>
     <script src="vocabulary-business-emotions.js"></script>
+
+    <!-- NEW: Mega Vocabulary Expansion (3000+ words total!) -->
+    <script src="vocabulary-mega-1.js"></script>
+    <script src="vocabulary-mega-2.js"></script>
+    <script src="vocabulary-mega-3.js"></script>
     <script src="vocabulary-compiler.js"></script>
 
     <!-- Data & App -->
     <script src="data.js"></script>
     <script src="infinite-resources.js"></script>
+    <script src="infinite-generator.js"></script>
     <script src="app.js"></script>
 </body>
 

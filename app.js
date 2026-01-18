@@ -1026,3 +1026,187 @@ function showShareOptions() {
     document.getElementById('infiniteContent').classList.add('hidden');
     document.getElementById('shareOptions').classList.remove('hidden');
 }
+
+// ===== NEW LOCAL INFINITE FUNCTIONS =====
+let currentLocalWord = null;
+let currentFillBlank = null;
+let localQuizQuestions = [];
+let localQuizIndex = 0;
+
+function hideAllInfiniteCards() {
+    const cards = ['infiniteWordCard', 'localWordCard', 'infiniteQuizCard', 'localQuizCard',
+        'fillBlankCard', 'wordOfDayCard', 'synonymCard', 'quoteCard'];
+    cards.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+}
+
+function startLocalVocab() {
+    document.getElementById('infiniteContent').classList.remove('hidden');
+    document.getElementById('shareOptions').classList.add('hidden');
+    hideAllInfiniteCards();
+    document.getElementById('localWordCard').classList.remove('hidden');
+
+    if (typeof InfiniteWordGenerator !== 'undefined') {
+        currentLocalWord = InfiniteWordGenerator.getWord();
+        document.getElementById('localWord').textContent = currentLocalWord.word;
+        document.getElementById('localCategory').textContent = currentLocalWord.category;
+        document.getElementById('localPhonetic').textContent = currentLocalWord.phonetic;
+        document.getElementById('localTranslation').textContent = currentLocalWord.translation;
+        document.getElementById('localExample').textContent = currentLocalWord.example;
+    } else {
+        showToast('Gerador de palavras não disponível', 'error');
+    }
+}
+
+function speakLocalWord() {
+    if (currentLocalWord) {
+        speak(currentLocalWord.word);
+    }
+}
+
+function nextLocalWord() {
+    startLocalVocab();
+}
+
+function startLocalQuiz() {
+    document.getElementById('infiniteContent').classList.remove('hidden');
+    document.getElementById('shareOptions').classList.add('hidden');
+    hideAllInfiniteCards();
+    document.getElementById('localQuizCard').classList.remove('hidden');
+
+    if (typeof InfiniteWordGenerator !== 'undefined') {
+        localQuizQuestions = InfiniteWordGenerator.generateQuiz(10);
+        localQuizIndex = 0;
+        loadLocalQuizQuestion();
+    } else {
+        showToast('Gerador de quiz não disponível', 'error');
+    }
+}
+
+function loadLocalQuizQuestion() {
+    if (localQuizIndex >= localQuizQuestions.length) {
+        showToast('🎉 Quiz completo!', 'success');
+        localQuizIndex = 0;
+        localQuizQuestions = InfiniteWordGenerator.generateQuiz(10);
+    }
+
+    const q = localQuizQuestions[localQuizIndex];
+    if (q) {
+        document.getElementById('localQuizQuestion').textContent = q.question;
+        const container = document.getElementById('localQuizOptions');
+        container.innerHTML = q.options.map((o, i) => `
+            <button class="quiz-option" onclick="checkLocalQuiz(this, ${i}, ${q.correct})">${o}</button>
+        `).join('');
+    }
+}
+
+function checkLocalQuiz(btn, selected, correct) {
+    const options = document.querySelectorAll('#localQuizOptions .quiz-option');
+    options.forEach((o, i) => {
+        o.disabled = true;
+        if (i === correct) o.classList.add('correct');
+    });
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        showToast('✅ Correto!', 'success');
+        state.correctAnswers++;
+    } else {
+        btn.classList.add('incorrect');
+        showToast('❌ Incorreto', 'error');
+    }
+    state.totalQuizzes++;
+    updateDashboard();
+    saveState();
+}
+
+function nextLocalQuiz() {
+    localQuizIndex++;
+    loadLocalQuizQuestion();
+}
+
+function startFillBlanks() {
+    document.getElementById('infiniteContent').classList.remove('hidden');
+    document.getElementById('shareOptions').classList.add('hidden');
+    hideAllInfiniteCards();
+    document.getElementById('fillBlankCard').classList.remove('hidden');
+    document.getElementById('fillResult').classList.add('hidden');
+    document.getElementById('fillInput').value = '';
+
+    if (typeof InfiniteWordGenerator !== 'undefined') {
+        currentFillBlank = InfiniteWordGenerator.generateFillBlank();
+        document.getElementById('fillSentence').textContent = currentFillBlank.sentence;
+        document.getElementById('fillHint').textContent = '💡 Dica: ' + currentFillBlank.hint;
+    }
+}
+
+function checkFillBlank() {
+    const input = document.getElementById('fillInput').value.trim().toLowerCase();
+    const result = document.getElementById('fillResult');
+    result.classList.remove('hidden');
+
+    state.totalQuizzes++;
+    if (input === currentFillBlank.answer.toLowerCase()) {
+        result.className = 'fill-result result-correct';
+        result.innerHTML = '✅ Correto! A resposta é: ' + currentFillBlank.answer;
+        state.correctAnswers++;
+        state.wordsToday++;
+    } else {
+        result.className = 'fill-result result-incorrect';
+        result.innerHTML = '❌ A resposta correta é: ' + currentFillBlank.answer;
+    }
+    updateDashboard();
+    saveState();
+}
+
+function nextFillBlank() {
+    startFillBlanks();
+}
+
+function showWordOfDay() {
+    document.getElementById('infiniteContent').classList.remove('hidden');
+    document.getElementById('shareOptions').classList.add('hidden');
+    hideAllInfiniteCards();
+    document.getElementById('wordOfDayCard').classList.remove('hidden');
+
+    if (typeof InfiniteWordGenerator !== 'undefined') {
+        const wod = InfiniteWordGenerator.getWordOfTheDay();
+        document.getElementById('wodDate').textContent = '📅 ' + wod.date;
+        document.getElementById('wodWord').textContent = wod.word;
+        document.getElementById('wodTranslation').textContent = wod.translation;
+    }
+}
+
+function speakWOD() {
+    const word = document.getElementById('wodWord').textContent;
+    if (word) speak(word);
+}
+
+const synonymBaseWords = ['big', 'small', 'good', 'bad', 'happy', 'sad', 'fast', 'slow'];
+let currentSynonymWord = '';
+
+function startSynonyms() {
+    document.getElementById('infiniteContent').classList.remove('hidden');
+    document.getElementById('shareOptions').classList.add('hidden');
+    hideAllInfiniteCards();
+    document.getElementById('synonymCard').classList.remove('hidden');
+
+    currentSynonymWord = synonymBaseWords[Math.floor(Math.random() * synonymBaseWords.length)];
+    document.getElementById('synonymWord').textContent = currentSynonymWord.charAt(0).toUpperCase() + currentSynonymWord.slice(1);
+
+    if (typeof InfiniteWordGenerator !== 'undefined') {
+        const synonyms = InfiniteWordGenerator.getSynonyms(currentSynonymWord);
+        const antonym = InfiniteWordGenerator.getAntonyms(currentSynonymWord);
+
+        document.getElementById('synonymList').innerHTML = synonyms.map(s =>
+            `<span class="synonym-tag">${s}</span>`
+        ).join('');
+        document.getElementById('antonymWord').textContent = antonym;
+    }
+}
+
+function nextSynonym() {
+    startSynonyms();
+}
