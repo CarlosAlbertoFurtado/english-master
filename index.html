@@ -98,6 +98,9 @@
                     <button class="btn btn-outline" onclick="showSection('infinite')">
                         <span>♾️</span> Modo Infinito
                     </button>
+                    <button class="btn btn-primary glow-btn" onclick="showSection('conversation')">
+                        <span>🤖</span> Conversar com IA
+                    </button>
                     <button class="btn btn-outline share-btn" onclick="ShareApp.shareApp()">
                         <span>📤</span> Compartilhar
                     </button>
@@ -536,6 +539,114 @@
                 <p class="share-note">💡 Para seus amigos acessarem, o app precisa estar hospedado online!</p>
             </div>
         </section>
+
+        <!-- AI Conversation Section (NEW!) -->
+        <section class="conversation-section hidden" id="conversationSection">
+            <div class="section-header">
+                <button class="btn-back" onclick="goBack()">← Voltar</button>
+                <h2 class="section-title">🤖 Conversa com IA</h2>
+            </div>
+
+            <!-- Level and Topic Selection -->
+            <div class="conversation-setup" id="conversationSetup">
+                <div class="ai-intro">
+                    <div class="ai-avatar">👩‍🏫</div>
+                    <div class="ai-info">
+                        <h3>Emma - Professora Nativa</h3>
+                        <p>Pratique inglês conversando comigo! Vou corrigir seus erros e ajudar você a melhorar.</p>
+                    </div>
+                </div>
+
+                <h3 class="setup-title">Escolha seu nível:</h3>
+                <div class="level-buttons">
+                    <button class="level-btn active" onclick="selectConversationLevel('beginner')" id="levelBeginner">
+                        🌱 Iniciante
+                    </button>
+                    <button class="level-btn" onclick="selectConversationLevel('intermediate')" id="levelIntermediate">
+                        🌿 Intermediário
+                    </button>
+                    <button class="level-btn" onclick="selectConversationLevel('advanced')" id="levelAdvanced">
+                        🌳 Avançado
+                    </button>
+                </div>
+
+                <h3 class="setup-title">Escolha um tema para conversar:</h3>
+                <div class="topic-grid" id="topicGrid">
+                    <!-- Topics will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="chat-container hidden" id="chatContainer">
+                <div class="chat-header">
+                    <div class="chat-ai-info">
+                        <span class="chat-avatar">👩‍🏫</span>
+                        <div>
+                            <span class="chat-name">Emma</span>
+                            <span class="chat-status">🟢 Online</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn-icon-small" onclick="toggleChatSettings()" title="Configurações">⚙️</button>
+                        <button class="btn-icon-small" onclick="endConversation()" title="Encerrar">✕</button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <!-- Grammar Correction Display -->
+                <div class="grammar-correction hidden" id="grammarCorrection">
+                    <div class="correction-header">
+                        <span>📝 Correção de Gramática</span>
+                        <button onclick="hideGrammarCorrection()">✕</button>
+                    </div>
+                    <div class="correction-content" id="correctionContent"></div>
+                </div>
+
+                <!-- Encouragement Display -->
+                <div class="encouragement hidden" id="encouragement">
+                    <span id="encouragementText"></span>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" id="chatInput"
+                            placeholder="Digite sua mensagem em inglês..." onkeypress="handleChatKeyPress(event)">
+                        <button class="btn-voice" id="voiceBtn" onclick="startVoiceInput()" title="Falar">
+                            🎤
+                        </button>
+                    </div>
+                    <button class="btn-send" onclick="sendChatMessage()">
+                        <span>Enviar</span>
+                        <span>➤</span>
+                    </button>
+                </div>
+
+                <div class="chat-tips">
+                    <span>💡 Dica: Fale naturalmente! Emma vai corrigir seus erros gentilmente.</span>
+                </div>
+            </div>
+
+            <!-- Chat Settings Modal -->
+            <div class="chat-settings hidden" id="chatSettings">
+                <h4>⚙️ Configurações da Conversa</h4>
+                <label class="setting-option">
+                    <input type="checkbox" id="autoSpeak" checked>
+                    <span>Emma fala as respostas automaticamente</span>
+                </label>
+                <label class="setting-option">
+                    <input type="checkbox" id="showCorrections" checked>
+                    <span>Mostrar correções de gramática</span>
+                </label>
+                <label class="setting-option">
+                    <input type="checkbox" id="slowSpeech">
+                    <span>Fala mais devagar</span>
+                </label>
+                <button class="btn btn-primary" onclick="toggleChatSettings()">Fechar</button>
+            </div>
+        </section>
     </main>
 
     <!-- Modals -->
@@ -631,6 +742,7 @@
     <script src="data.js"></script>
     <script src="infinite-resources.js"></script>
     <script src="infinite-generator.js"></script>
+    <script src="ai-conversation.js"></script>
     <script src="app.js"></script>
 </body>
 

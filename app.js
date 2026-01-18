@@ -186,7 +186,7 @@ function updateDashboard() {
 // ===== NAVIGATION =====
 function showSection(section) {
     const sections = ['heroSection', 'levelSection', 'vocabularySection', 'phrasesSection',
-        'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'progressDashboard'];
+        'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'conversationSection', 'progressDashboard'];
     sections.forEach(s => {
         const el = document.getElementById(s);
         if (el) {
@@ -218,6 +218,9 @@ function showSection(section) {
         loadVerbs();
     } else if (section === 'infinite') {
         document.getElementById('infiniteSection').classList.remove('hidden');
+    } else if (section === 'conversation') {
+        document.getElementById('conversationSection').classList.remove('hidden');
+        initConversation();
     } else {
         document.getElementById('heroSection').classList.remove('hidden');
         document.getElementById('progressDashboard').classList.remove('hidden');
@@ -1458,3 +1461,253 @@ function startSynonyms() {
 function nextSynonym() {
     startSynonyms();
 }
+
+// ===== AI CONVERSATION FUNCTIONS =====
+let selectedConversationLevel = 'beginner';
+let isVoiceInputActive = false;
+
+function initConversation() {
+    if (typeof AIConversation !== 'undefined') {
+        AIConversation.init();
+        loadTopics(selectedConversationLevel);
+    }
+}
+
+function selectConversationLevel(level) {
+    selectedConversationLevel = level;
+
+    // Update button states
+    document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('active');
+
+    // Load topics for selected level
+    loadTopics(level);
+}
+
+function loadTopics(level) {
+    const topicGrid = document.getElementById('topicGrid');
+    if (!topicGrid || typeof AIConversation === 'undefined') return;
+
+    const topics = AIConversation.getSuggestedTopics(level);
+
+    topicGrid.innerHTML = topics.map(topic => `
+        <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
+            <span class="topic-icon">${topic.icon}</span>
+            <span class="topic-name">${topic.name}</span>
+        </div>
+    `).join('');
+}
+
+function startConversationTopic(topicId) {
+    if (typeof AIConversation === 'undefined') {
+        showToast('Sistema de conversa não carregado', 'error');
+        return;
+    }
+
+    // Hide setup, show chat
+    document.getElementById('conversationSetup').classList.add('hidden');
+    document.getElementById('chatContainer').classList.remove('hidden');
+
+    // Clear previous messages
+    document.getElementById('chatMessages').innerHTML = '';
+
+    // Start conversation
+    const starterMessage = AIConversation.startConversation(topicId, selectedConversationLevel);
+
+    // Add AI message
+    addChatMessage('ai', starterMessage);
+
+    // Speak if auto-speak is enabled
+    if (document.getElementById('autoSpeak')?.checked) {
+        setTimeout(() => speak(starterMessage), 500);
+    }
+}
+
+function addChatMessage(role, message) {
+    const chatMessages = document.getElementById('chatMessages');
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${role}-message`;
+
+    if (role === 'ai') {
+        messageDiv.innerHTML = `
+            <div class="message-avatar">👩‍🏫</div>
+            <div class="message-content">
+                <div class="message-text">${message}</div>
+                <button class="btn-speak-msg" onclick="speak('${message.replace(/'/g, "\\'")}')">🔊</button>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-text">${message}</div>
+            </div>
+            <div class="message-avatar">👤</div>
+        `;
+    }
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    // Add user message
+    addChatMessage('user', message);
+    input.value = '';
+
+    // Process with AI
+    if (typeof AIConversation !== 'undefined') {
+        const result = AIConversation.processMessage(message);
+
+        // Show corrections if enabled and there are any
+        if (result.corrections.length > 0 && document.getElementById('showCorrections')?.checked) {
+            showGrammarCorrection(result.corrections);
+        }
+
+        // Show encouragement if any
+        if (result.encouragement) {
+            showEncouragement(result.encouragement);
+        }
+
+        // Add AI response with slight delay for natural feel
+        setTimeout(() => {
+            addChatMessage('ai', result.response);
+
+            // Speak if auto-speak enabled
+            if (document.getElementById('autoSpeak')?.checked) {
+                const rate = document.getElementById('slowSpeech')?.checked ? 0.7 : 0.85;
+                speakWithRate(result.response, rate);
+            }
+        }, 800);
+    }
+}
+
+function speakWithRate(text, rate = 0.85) {
+    if (!('speechSynthesis' in window)) return;
+
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = rate;
+    speechSynthesis.speak(utterance);
+}
+
+function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendChatMessage();
+    }
+}
+
+function showGrammarCorrection(corrections) {
+    const container = document.getElementById('grammarCorrection');
+    const content = document.getElementById('correctionContent');
+
+    content.innerHTML = corrections.map(c => `
+        <div class="correction-item">
+            <span class="wrong">❌ "${c.wrong}"</span>
+            <span class="arrow">→</span>
+            <span class="correct">✅ "${c.correct}"</span>
+            <p class="explanation">💡 ${c.explanation}</p>
+        </div>
+    `).join('');
+
+    container.classList.remove('hidden');
+
+    // Auto-hide after 8 seconds
+    setTimeout(() => hideGrammarCorrection(), 8000);
+}
+
+function hideGrammarCorrection() {
+    document.getElementById('grammarCorrection').classList.add('hidden');
+}
+
+function showEncouragement(text) {
+    const container = document.getElementById('encouragement');
+    document.getElementById('encouragementText').textContent = text;
+    container.classList.remove('hidden');
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        container.classList.add('hidden');
+    }, 3000);
+}
+
+function startVoiceInput() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        showToast('Seu navegador não suporta entrada de voz', 'error');
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    const voiceBtn = document.getElementById('voiceBtn');
+    voiceBtn.classList.add('recording');
+    isVoiceInputActive = true;
+
+    showToast('🎤 Fale sua mensagem em inglês...', 'info');
+
+    try {
+        recognition.start();
+    } catch (e) {
+        voiceBtn.classList.remove('recording');
+        showToast('Erro ao iniciar reconhecimento de voz', 'error');
+        return;
+    }
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('chatInput').value = transcript;
+        voiceBtn.classList.remove('recording');
+        isVoiceInputActive = false;
+
+        // Auto-send after voice input
+        setTimeout(() => sendChatMessage(), 300);
+    };
+
+    recognition.onerror = (event) => {
+        voiceBtn.classList.remove('recording');
+        isVoiceInputActive = false;
+
+        if (event.error === 'no-speech') {
+            showToast('Nenhuma fala detectada. Tente novamente.', 'warning');
+        } else {
+            showToast('Erro no reconhecimento: ' + event.error, 'error');
+        }
+    };
+
+    recognition.onend = () => {
+        voiceBtn.classList.remove('recording');
+        isVoiceInputActive = false;
+    };
+}
+
+function toggleChatSettings() {
+    document.getElementById('chatSettings').classList.toggle('hidden');
+}
+
+function endConversation() {
+    if (typeof AIConversation !== 'undefined') {
+        AIConversation.reset();
+    }
+
+    document.getElementById('chatContainer').classList.add('hidden');
+    document.getElementById('conversationSetup').classList.remove('hidden');
+    document.getElementById('chatMessages').innerHTML = '';
+
+    showToast('Conversa encerrada. Escolha um novo tema!', 'info');
+}
+
+// Initialize conversation when section is shown
+document.addEventListener('DOMContentLoaded', () => {
+    // Will be called when conversation section is shown
+});
