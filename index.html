@@ -29,6 +29,402 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Emma Chat Interface Styles -->
+    <style>
+        /* Emma Intro Card */
+        .emma-intro-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 24px;
+            margin-bottom: 2rem;
+        }
+
+        .emma-large-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #8b5cf6;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .emma-intro-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .emma-intro-card p {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .emma-badges {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(139, 92, 246, 0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #c4b5fd;
+        }
+
+        /* Minimal Level Selection */
+        .level-select-minimal,
+        .topics-minimal {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .level-select-minimal p,
+        .topics-minimal p {
+            color: #94a3b8;
+            margin-bottom: 0.75rem;
+        }
+
+        .level-pills,
+        .topic-pills {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .pill:hover,
+        .pill.active {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .topic-pills .pill {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Emma Chat Interface */
+        .emma-chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+            position: relative;
+        }
+
+        .emma-main-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .emma-avatar-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .emma-speaking-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #8b5cf6;
+            transition: all 0.3s;
+        }
+
+        .emma-speaking-avatar.speaking {
+            animation: speakPulse 0.5s ease-in-out infinite;
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+        }
+
+        @keyframes speakPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .speaking-indicator {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .speaking-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: bounce 1s infinite;
+        }
+
+        .speaking-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .speaking-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Live Subtitle */
+        .live-subtitle {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .live-subtitle p {
+            color: #fff;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Correction Popup */
+        .correction-popup {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .correction-badge {
+            font-size: 1.5rem;
+        }
+
+        .correction-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        /* Input Area */
+        .emma-input-area {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            margin: 1rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .voice-circle,
+        .send-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voice-circle {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        }
+
+        .voice-circle:hover {
+            transform: scale(1.1);
+        }
+
+        .voice-circle.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: recordPulse 1s infinite;
+        }
+
+        @keyframes recordPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .send-circle {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .input-row input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.9rem 1.2rem;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .input-row input::placeholder {
+            color: #64748b;
+        }
+
+        /* History Toggle */
+        .history-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .history-toggle:hover {
+            color: #fff;
+        }
+
+        .history-panel {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            margin: 0 1rem 1rem;
+        }
+
+        .history-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .history-msg {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .history-msg.user {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            align-self: flex-end;
+        }
+
+        .history-msg.ai {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        /* Float Buttons */
+        .settings-float,
+        .end-float {
+            position: absolute;
+            top: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .settings-float {
+            right: 4rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .end-float {
+            right: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .settings-float:hover,
+        .end-float:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 
 <body>
@@ -544,101 +940,104 @@
         <section class="conversation-section hidden" id="conversationSection">
             <div class="section-header">
                 <button class="btn-back" onclick="goBack()">← Voltar</button>
-                <h2 class="section-title">🤖 Conversa com IA</h2>
+                <h2 class="section-title">🎤 Conversa com Emma</h2>
             </div>
 
             <!-- Level and Topic Selection -->
             <div class="conversation-setup" id="conversationSetup">
-                <div class="ai-intro">
-                    <div class="ai-avatar">👩‍🏫</div>
-                    <div class="ai-info">
-                        <h3>Emma - Professora Nativa</h3>
-                        <p>Pratique inglês conversando comigo! Vou corrigir seus erros e ajudar você a melhorar.</p>
+                <div class="emma-intro-card">
+                    <img src="emma-avatar.png" alt="Emma" class="emma-large-avatar">
+                    <h3>Emma</h3>
+                    <p>Sua professora de inglês</p>
+                    <div class="emma-badges">
+                        <span class="badge">🎓 Nativa</span>
+                        <span class="badge">💬 Paciente</span>
+                        <span class="badge">📝 Corrige erros</span>
                     </div>
                 </div>
 
-                <h3 class="setup-title">Escolha seu nível:</h3>
-                <div class="level-buttons">
-                    <button class="level-btn active" onclick="selectConversationLevel('beginner')" id="levelBeginner">
-                        🌱 Iniciante
-                    </button>
-                    <button class="level-btn" onclick="selectConversationLevel('intermediate')" id="levelIntermediate">
-                        🌿 Intermediário
-                    </button>
-                    <button class="level-btn" onclick="selectConversationLevel('advanced')" id="levelAdvanced">
-                        🌳 Avançado
-                    </button>
+                <div class="level-select-minimal">
+                    <p>Selecione seu nível:</p>
+                    <div class="level-pills">
+                        <button class="pill active" onclick="selectConversationLevel('beginner')" id="levelBeginner">🌱
+                            Iniciante</button>
+                        <button class="pill" onclick="selectConversationLevel('intermediate')" id="levelIntermediate">🌿
+                            Intermediário</button>
+                        <button class="pill" onclick="selectConversationLevel('advanced')" id="levelAdvanced">🌳
+                            Avançado</button>
+                    </div>
                 </div>
 
-                <h3 class="setup-title">Escolha um tema para conversar:</h3>
-                <div class="topic-grid" id="topicGrid">
-                    <!-- Topics will be loaded dynamically -->
+                <div class="topics-minimal">
+                    <p>Sobre o que vamos conversar?</p>
+                    <div class="topic-pills" id="topicGrid">
+                        <!-- Topics loaded dynamically -->
+                    </div>
                 </div>
             </div>
 
-            <!-- Chat Interface -->
-            <div class="chat-container hidden" id="chatContainer">
-                <div class="chat-header">
-                    <div class="chat-ai-info">
-                        <span class="chat-avatar">👩‍🏫</span>
-                        <div>
-                            <span class="chat-name">Emma</span>
-                            <span class="chat-status">🟢 Online</span>
+            <!-- Clean Chat Interface -->
+            <div class="emma-chat-interface hidden" id="chatContainer">
+                <!-- Emma Avatar Section - Main Focus -->
+                <div class="emma-main-view">
+                    <div class="emma-avatar-container">
+                        <img src="emma-avatar.png" alt="Emma" class="emma-speaking-avatar" id="emmaAvatar">
+                        <div class="speaking-indicator hidden" id="speakingIndicator">
+                            <span></span><span></span><span></span>
                         </div>
                     </div>
-                    <div class="chat-actions">
-                        <button class="btn-icon-small" onclick="toggleChatSettings()" title="Configurações">⚙️</button>
-                        <button class="btn-icon-small" onclick="endConversation()" title="Encerrar">✕</button>
+
+                    <!-- Live Subtitle - Shows current speech -->
+                    <div class="live-subtitle" id="liveSubtitle">
+                        <p id="subtitleText">Olá! Escolha um tema e vamos conversar! 😊</p>
+                    </div>
+
+                    <!-- Correction popup -->
+                    <div class="correction-popup hidden" id="correctionPopup">
+                        <div class="correction-badge">📝</div>
+                        <div class="correction-text" id="correctionText"></div>
                     </div>
                 </div>
 
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Messages will appear here -->
-                </div>
-
-                <!-- Grammar Correction Display -->
-                <div class="grammar-correction hidden" id="grammarCorrection">
-                    <div class="correction-header">
-                        <span>📝 Correção de Gramática</span>
-                        <button onclick="hideGrammarCorrection()">✕</button>
-                    </div>
-                    <div class="correction-content" id="correctionContent"></div>
-                </div>
-
-                <!-- Encouragement Display -->
-                <div class="encouragement hidden" id="encouragement">
-                    <span id="encouragementText"></span>
-                </div>
-
-                <div class="chat-input-container">
-                    <div class="chat-input-wrapper">
-                        <input type="text" class="chat-input" id="chatInput"
-                            placeholder="Digite sua mensagem em inglês..." onkeypress="handleChatKeyPress(event)">
-                        <button class="btn-voice" id="voiceBtn" onclick="startVoiceInput()" title="Falar">
-                            🎤
+                <!-- Minimal Input Area -->
+                <div class="emma-input-area">
+                    <div class="input-row">
+                        <button class="voice-circle" id="voiceBtn" onclick="startVoiceInput()">
+                            <span id="voiceIcon">🎤</span>
                         </button>
+                        <input type="text" id="chatInput" placeholder="Type in English..."
+                            onkeypress="handleChatKeyPress(event)">
+                        <button class="send-circle" onclick="sendChatMessage()">➤</button>
                     </div>
-                    <button class="btn-send" onclick="sendChatMessage()">
-                        <span>Enviar</span>
-                        <span>➤</span>
-                    </button>
                 </div>
 
-                <div class="chat-tips">
-                    <span>💡 Dica: Fale naturalmente! Emma vai corrigir seus erros gentilmente.</span>
+                <!-- Expandable History Panel -->
+                <div class="history-toggle" onclick="toggleHistory()">
+                    <span>📜 Histórico</span>
+                    <span id="historyArrow">▼</span>
                 </div>
+
+                <div class="history-panel hidden" id="historyPanel">
+                    <div class="history-messages" id="chatMessages">
+                        <!-- Messages stored here -->
+                    </div>
+                </div>
+
+                <!-- Settings Button -->
+                <button class="settings-float" onclick="toggleChatSettings()">⚙️</button>
+                <button class="end-float" onclick="endConversation()">✕</button>
             </div>
 
-            <!-- Chat Settings Modal -->
+            <!-- Settings Modal -->
             <div class="chat-settings hidden" id="chatSettings">
-                <h4>⚙️ Configurações da Conversa</h4>
+                <h4>⚙️ Configurações</h4>
                 <label class="setting-option">
                     <input type="checkbox" id="autoSpeak" checked>
-                    <span>Emma fala as respostas automaticamente</span>
+                    <span>Emma fala automaticamente</span>
                 </label>
                 <label class="setting-option">
                     <input type="checkbox" id="showCorrections" checked>
-                    <span>Mostrar correções de gramática</span>
+                    <span>Mostrar correções</span>
                 </label>
                 <label class="setting-option">
                     <input type="checkbox" id="slowSpeech">
@@ -745,13 +1144,11 @@
     <script src="ai-conversation.js"></script>
     <script src="app.js"></script>
 
-    <!-- Enhanced AI Chat System with Voice, Typing Indicator, and Natural Conversations -->
+    <!-- Emma Chat System - Clean Interface with Live Subtitles -->
     <script>
         let selectedConversationLevel = 'beginner';
         let isRecording = false;
-        let typingIndicator = null;
 
-        // Initialize conversation
         window.initConversation = function () {
             if (typeof AIConversation !== 'undefined') {
                 AIConversation.init();
@@ -759,378 +1156,169 @@
             }
         };
 
-        // Select difficulty level
         window.selectConversationLevel = function (level) {
             selectedConversationLevel = level;
-            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
             const btn = document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1));
             if (btn) btn.classList.add('active');
             loadTopics(level);
         };
 
-        // Load topic cards
         window.loadTopics = function (level) {
             const topicGrid = document.getElementById('topicGrid');
             if (!topicGrid || typeof AIConversation === 'undefined') return;
             const topics = AIConversation.getSuggestedTopics(level);
-            topicGrid.innerHTML = topics.map(topic => `
-                <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
-                    <span class="topic-icon">${topic.icon}</span>
-                    <span class="topic-name">${topic.name}</span>
-                </div>
-            `).join('');
+            topicGrid.innerHTML = topics.map(topic =>
+                `<button class="pill" onclick="startConversationTopic('${topic.id}')">${topic.icon} ${topic.name.split(' ').slice(1).join(' ') || topic.name}</button>`
+            ).join('');
         };
 
-        // Start conversation with topic
         window.startConversationTopic = function (topicId) {
             document.getElementById('conversationSetup').classList.add('hidden');
             document.getElementById('chatContainer').classList.remove('hidden');
             document.getElementById('chatMessages').innerHTML = '';
-
-            // Show typing indicator first for realism
-            showTypingIndicator();
+            showSubtitle("Let me think... 🤔");
 
             setTimeout(() => {
-                hideTypingIndicator();
                 const msg = AIConversation.startConversation(topicId, selectedConversationLevel);
-                addChatMessage('ai', msg);
-                if (document.getElementById('autoSpeak')?.checked) {
-                    setTimeout(() => speak(msg), 300);
-                }
-            }, 1000 + Math.random() * 1000); // Random delay for natural feel
+                showEmmaMessage(msg);
+            }, 2500 + Math.random() * 1500);
         };
 
-        // Show typing indicator
-        function showTypingIndicator() {
-            const chatMessages = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = 'chat-message ai-message typing-indicator';
-            div.id = 'typingIndicator';
-            div.innerHTML = `
-                <div class="message-avatar">👩‍🏫</div>
-                <div class="message-content">
-                    <div class="typing-dots">
-                        <span></span><span></span><span></span>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Hide typing indicator
-        function hideTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-
-        // Add chat message with animation
-        window.addChatMessage = function (role, message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = `chat-message ${role}-message`;
-            div.style.opacity = '0';
-            div.style.transform = 'translateY(20px)';
-
-            const safe = message.replace(/'/g, "\\'").replace(/"/g, '\\"');
-
-            if (role === 'ai') {
-                div.innerHTML = `
-                    <div class="message-avatar">👩‍🏫</div>
-                    <div class="message-content">
-                        <div class="message-text">${message}</div>
-                        <button class="btn-speak-msg" onclick="speak('${safe}')" title="Ouvir">🔊</button>
-                    </div>
-                `;
+        function showEmmaMessage(message) {
+            setEmmaSpeaking(true);
+            showSubtitle(message);
+            addToHistory('ai', message);
+            if (document.getElementById('autoSpeak')?.checked) {
+                speakWithAnimation(message);
             } else {
-                div.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-text">${message}</div>
-                    </div>
-                    <div class="message-avatar">👤</div>
-                `;
+                setTimeout(() => setEmmaSpeaking(false), 3000);
             }
+        }
 
-            chatMessages.appendChild(div);
+        function showSubtitle(text) {
+            const el = document.getElementById('subtitleText');
+            if (el) { el.style.opacity = '0'; setTimeout(() => { el.textContent = text; el.style.opacity = '1'; }, 150); }
+        }
 
-            // Animate in
-            setTimeout(() => {
-                div.style.transition = 'all 0.3s ease';
-                div.style.opacity = '1';
-                div.style.transform = 'translateY(0)';
-            }, 50);
+        function setEmmaSpeaking(speaking) {
+            const avatar = document.getElementById('emmaAvatar');
+            const indicator = document.getElementById('speakingIndicator');
+            if (avatar) avatar.classList.toggle('speaking', speaking);
+            if (indicator) indicator.classList.toggle('hidden', !speaking);
+        }
 
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function speakWithAnimation(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                u.rate = document.getElementById('slowSpeech')?.checked ? 0.7 : 0.9;
+                u.onstart = () => setEmmaSpeaking(true);
+                u.onend = () => setEmmaSpeaking(false);
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function addToHistory(role, message) {
+            const el = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `history-msg ${role}`;
+            div.textContent = role === 'ai' ? `Emma: ${message}` : `You: ${message}`;
+            el.appendChild(div);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        window.toggleHistory = function () {
+            const panel = document.getElementById('historyPanel');
+            const arrow = document.getElementById('historyArrow');
+            if (panel) { panel.classList.toggle('hidden'); arrow.textContent = panel.classList.contains('hidden') ? '▼' : '▲'; }
         };
 
-        // Send message with natural delay and corrections
         window.sendChatMessage = async function () {
             const input = document.getElementById('chatInput');
             const msg = input.value.trim();
             if (!msg) return;
-
-            addChatMessage('user', msg);
+            showSubtitle(`You: "${msg}"`);
+            addToHistory('user', msg);
             input.value = '';
-            input.focus();
 
-            // Show typing indicator for realism
-            showTypingIndicator();
+            setTimeout(() => showSubtitle("Thinking... 💭"), 1000);
 
-            // Process message
             const result = await AIConversation.processMessage(msg);
 
-            // Show grammar corrections if any
-            if (result.corrections && result.corrections.length > 0) {
-                showGrammarCorrections(result.corrections);
+            if (result.corrections?.length > 0) {
+                const c = result.corrections[0];
+                const popup = document.getElementById('correctionPopup');
+                const text = document.getElementById('correctionText');
+                if (popup && text) {
+                    text.innerHTML = `<b>"${c.wrong}"</b> → <b>"${c.correct}"</b><br><small>${c.explanation}</small>`;
+                    popup.classList.remove('hidden');
+                    setTimeout(() => popup.classList.add('hidden'), 5000);
+                }
             }
 
-            // Variable delay for natural feel (1-3 seconds)
-            const delay = 1000 + Math.random() * 2000;
-
             setTimeout(() => {
-                hideTypingIndicator();
-
-                // Show encouragement if earned
                 if (result.encouragement) {
-                    showEncouragementBadge(result.encouragement);
+                    showSubtitle(result.encouragement);
+                    setTimeout(() => showEmmaMessage(result.response), 2000);
+                } else {
+                    showEmmaMessage(result.response);
                 }
-
-                addChatMessage('ai', result.response);
-
-                // Auto speak
-                if (document.getElementById('autoSpeak')?.checked) {
-                    speak(result.response);
-                }
-            }, delay);
+            }, 2500 + Math.random() * 1500);
         };
 
-        // Show grammar corrections with clear explanation
-        function showGrammarCorrections(corrections) {
-            const container = document.getElementById('grammarCorrection');
-            const content = document.getElementById('correctionContent');
-            if (!container || !content) return;
+        window.handleChatKeyPress = function (e) { if (e.key === 'Enter') sendChatMessage(); };
 
-            const showCorrections = document.getElementById('showCorrections');
-            if (showCorrections && !showCorrections.checked) return;
-
-            content.innerHTML = corrections.map(c => `
-                <div class="correction-item" style="margin-bottom: 10px; padding: 10px; background: rgba(255,100,100,0.1); border-radius: 8px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                        <span style="color: #ff6b6b; text-decoration: line-through;">❌ "${c.wrong}"</span>
-                        <span>→</span>
-                        <span style="color: #51cf66; font-weight: bold;">✅ "${c.correct}"</span>
-                    </div>
-                    <p style="color: #ffd43b; font-size: 0.9em; margin: 0;">💡 ${c.explanation}</p>
-                </div>
-            `).join('');
-
-            container.classList.remove('hidden');
-            container.style.animation = 'slideIn 0.3s ease';
-
-            // Auto hide after 10 seconds
-            setTimeout(() => {
-                container.classList.add('hidden');
-            }, 10000);
-        }
-
-        // Show encouragement badge
-        function showEncouragementBadge(text) {
-            const container = document.getElementById('encouragement');
-            const textEl = document.getElementById('encouragementText');
-            if (!container || !textEl) return;
-
-            textEl.textContent = text;
-            container.classList.remove('hidden');
-            container.style.animation = 'bounceIn 0.5s ease';
-
-            setTimeout(() => {
-                container.classList.add('hidden');
-            }, 4000);
-        }
-
-        // Handle Enter key
-        window.handleChatKeyPress = function (e) {
-            if (e.key === 'Enter') sendChatMessage();
-        };
-
-        // ===== VOICE INPUT FUNCTION =====
         window.startVoiceInput = function () {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (!SpeechRecognition) {
-                alert('Seu navegador não suporta reconhecimento de voz. Tente usar o Chrome ou Edge.');
-                return;
-            }
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { alert('Use Chrome ou Edge para voz.'); return; }
 
             const voiceBtn = document.getElementById('voiceBtn');
+            const voiceIcon = document.getElementById('voiceIcon');
 
-            if (isRecording) {
-                isRecording = false;
-                voiceBtn.classList.remove('recording');
-                voiceBtn.innerHTML = '🎤';
-                return;
-            }
+            if (isRecording) { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; return; }
 
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
+            const r = new SR();
+            r.lang = 'en-US';
+            r.continuous = false;
+            r.interimResults = true;
 
             isRecording = true;
             voiceBtn.classList.add('recording');
-            voiceBtn.innerHTML = '🔴';
-            voiceBtn.style.animation = 'pulse 1s infinite';
+            voiceIcon.textContent = '🔴';
+            showSubtitle("🎤 Listening... Speak in English!");
 
-            // Show recording notification
-            const chatInput = document.getElementById('chatInput');
-            chatInput.placeholder = '🎤 Listening... Speak in English!';
-            chatInput.style.borderColor = '#ff6b6b';
+            try { r.start(); } catch (e) { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; return; }
 
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error('Voice recognition error:', e);
-                isRecording = false;
-                voiceBtn.classList.remove('recording');
-                voiceBtn.innerHTML = '🎤';
-                voiceBtn.style.animation = '';
-                chatInput.placeholder = 'Digite sua mensagem em inglês...';
-                chatInput.style.borderColor = '';
-                alert('Erro ao iniciar reconhecimento de voz. Verifique as permissões do microfone.');
-                return;
-            }
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                chatInput.value = transcript;
-
-                // If final result, auto-send
-                if (event.results[0].isFinal) {
-                    setTimeout(() => {
-                        sendChatMessage();
-                    }, 500);
-                }
+            r.onresult = (e) => {
+                const t = e.results[0][0].transcript;
+                document.getElementById('chatInput').value = t;
+                showSubtitle(`"${t}"`);
+                if (e.results[0].isFinal) setTimeout(() => sendChatMessage(), 500);
             };
 
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                isRecording = false;
-                voiceBtn.classList.remove('recording');
-                voiceBtn.innerHTML = '🎤';
-                voiceBtn.style.animation = '';
-                chatInput.placeholder = 'Digite sua mensagem em inglês...';
-                chatInput.style.borderColor = '';
-
-                if (event.error === 'no-speech') {
-                    alert('Nenhuma fala detectada. Tente novamente.');
-                } else if (event.error === 'not-allowed') {
-                    alert('Permissão de microfone negada. Permita o acesso ao microfone.');
-                }
-            };
-
-            recognition.onend = () => {
-                isRecording = false;
-                voiceBtn.classList.remove('recording');
-                voiceBtn.innerHTML = '🎤';
-                voiceBtn.style.animation = '';
-                chatInput.placeholder = 'Digite sua mensagem em inglês...';
-                chatInput.style.borderColor = '';
-            };
+            r.onend = () => { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; };
+            r.onerror = () => { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; };
         };
 
-        // Toggle chat settings
-        window.toggleChatSettings = function () {
-            const settings = document.getElementById('chatSettings');
-            if (settings) settings.classList.toggle('hidden');
-        };
+        window.toggleChatSettings = function () { document.getElementById('chatSettings')?.classList.toggle('hidden'); };
 
-        // Hide grammar correction
-        window.hideGrammarCorrection = function () {
-            const el = document.getElementById('grammarCorrection');
-            if (el) el.classList.add('hidden');
-        };
-
-        // End conversation
         window.endConversation = function () {
-            if (typeof AIConversation !== 'undefined') {
-                AIConversation.reset();
-            }
+            if (typeof AIConversation !== 'undefined') AIConversation.reset();
             document.getElementById('chatContainer').classList.add('hidden');
             document.getElementById('conversationSetup').classList.remove('hidden');
             document.getElementById('chatMessages').innerHTML = '';
         };
 
-        // Open AI Chat (bypasses cached showSection)
         window.openAIChat = function () {
-            const sections = ['heroSection', 'levelSection', 'vocabularySection', 'phrasesSection',
-                'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'progressDashboard'];
-            sections.forEach(s => {
-                const el = document.getElementById(s);
-                if (el) el.classList.add('hidden');
-            });
-
-            const convSection = document.getElementById('conversationSection');
-            if (convSection) {
-                convSection.classList.remove('hidden');
-                convSection.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            if (typeof AIConversation !== 'undefined') {
-                AIConversation.init();
-                loadTopics(selectedConversationLevel);
-            }
+            ['heroSection', 'levelSection', 'vocabularySection', 'phrasesSection', 'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'progressDashboard'].forEach(s => document.getElementById(s)?.classList.add('hidden'));
+            const conv = document.getElementById('conversationSection');
+            if (conv) { conv.classList.remove('hidden'); conv.scrollIntoView({ behavior: 'smooth' }); }
+            if (typeof AIConversation !== 'undefined') { AIConversation.init(); loadTopics(selectedConversationLevel); }
         };
 
-        // Add CSS for typing indicator and animations
-        const style = document.createElement('style');
-        style.textContent = `
-            .typing-dots {
-                display: flex;
-                gap: 4px;
-                padding: 10px;
-            }
-            .typing-dots span {
-                width: 8px;
-                height: 8px;
-                background: #8b5cf6;
-                border-radius: 50%;
-                animation: typingBounce 1.4s infinite ease-in-out both;
-            }
-            .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-            .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-            .typing-dots span:nth-child(3) { animation-delay: 0; }
-            
-            @keyframes typingBounce {
-                0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-                40% { transform: scale(1); opacity: 1; }
-            }
-            
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.2); }
-            }
-            
-            @keyframes slideIn {
-                from { transform: translateX(-20px); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes bounceIn {
-                0% { transform: scale(0.3); opacity: 0; }
-                50% { transform: scale(1.05); }
-                70% { transform: scale(0.9); }
-                100% { transform: scale(1); opacity: 1; }
-            }
-            
-            .btn-voice.recording {
-                background: linear-gradient(135deg, #ff6b6b, #ee5a5a) !important;
-                box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
-            }
-        `;
-        document.head.appendChild(style);
-
-        console.log('🚀 Enhanced AI Chat System ready with voice input!');
+        console.log('🎤 Emma Chat ready!');
     </script>
 </body>
 
