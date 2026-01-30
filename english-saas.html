@@ -1632,10 +1632,10 @@
         </div>
     </div>
 
-    <!-- DONATION MODAL (Optional) -->
+    <!-- DONATION MODAL - Mercado Pago -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal" style="max-width: 500px;">
-            <h2>☕ Apoie o Projeto</h2>
+            <h2>💚 Apoie o Projeto</h2>
             <div style="text-align: center; margin: 30px 0;">
                 <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">
                     Este app é <strong>100% gratuito</strong>! Mas se você quiser contribuir para manter o projeto
@@ -1643,17 +1643,39 @@
                 </p>
 
                 <div
-                    style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2);">
-                    <p style="margin-bottom: 15px; font-weight: 600;">📱 Doe via PIX (opcional)</p>
-                    <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
-                        <img id="pixQrCode"
-                            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Furtadoc293@gmail.com"
-                            alt="QR Code PIX" style="width: 150px; height: 150px;">
+                    style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 15px; border: 1px solid rgba(0, 158, 227, 0.3);">
+                    <p style="margin-bottom: 20px; font-weight: 600;">💳 Escolha o valor da doação:</p>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                        <button class="btn btn-outline donation-btn" onclick="setDonationAmount(5)"
+                            style="padding: 15px;">R$ 5</button>
+                        <button class="btn btn-outline donation-btn" onclick="setDonationAmount(10)"
+                            style="padding: 15px;">R$ 10</button>
+                        <button class="btn btn-outline donation-btn" onclick="setDonationAmount(20)"
+                            style="padding: 15px;">R$ 20</button>
+                        <button class="btn btn-outline donation-btn" onclick="setDonationAmount(50)"
+                            style="padding: 15px;">R$ 50</button>
+                        <button class="btn btn-outline donation-btn" onclick="setDonationAmount(100)"
+                            style="padding: 15px;">R$ 100</button>
+                        <button class="btn btn-outline donation-btn" onclick="setCustomDonation()"
+                            style="padding: 15px;">Outro</button>
                     </div>
-                    <p style="font-size: 0.85rem; color: var(--primary); word-break: break-all;" id="pixKeyDisplay">
-                        Chave PIX: Furtadoc293@gmail.com</p>
-                    <button class="btn btn-outline" onclick="copyPixKey()" style="margin-top: 15px;">📋 Copiar Chave
-                        PIX</button>
+
+                    <div id="customDonationInput" style="display: none; margin-bottom: 20px;">
+                        <input type="number" id="customAmount" placeholder="Digite o valor" min="1"
+                            style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 1.1rem; text-align: center;">
+                    </div>
+
+                    <button id="mpDonateBtn" class="btn" onclick="openMercadoPago()"
+                        style="width: 100%; padding: 18px; font-size: 1.1rem; background: linear-gradient(135deg, #009ee3, #00b1ea); border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <img src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/6.6.37/mercadopago/logo__large.png"
+                            alt="MP" style="height: 24px; filter: brightness(10);">
+                        Doar com Mercado Pago
+                    </button>
+
+                    <p style="margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.5);">
+                        Pagamento seguro via Mercado Pago - PIX, Cartão ou Boleto
+                    </p>
                 </div>
 
                 <p style="margin-top: 20px; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
@@ -2279,6 +2301,51 @@
             document.getElementById('wordsLearned').textContent = userStats.wordsLearned;
             document.getElementById('questionsCorrect').textContent = userStats.questionsCorrect;
             document.getElementById('studyTime').textContent = userStats.studyMinutes + 'min';
+        }
+
+        // ===== MERCADO PAGO DONATION =====
+        let donationAmount = 10; // Default R$10
+
+        function setDonationAmount(amount) {
+            donationAmount = amount;
+            // Highlight selected button
+            document.querySelectorAll('.donation-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(255,255,255,0.3)';
+            });
+            event.target.style.background = 'rgba(0, 158, 227, 0.3)';
+            event.target.style.borderColor = '#009ee3';
+            document.getElementById('customDonationInput').style.display = 'none';
+        }
+
+        function setCustomDonation() {
+            document.getElementById('customDonationInput').style.display = 'block';
+            document.querySelectorAll('.donation-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(255,255,255,0.3)';
+            });
+            event.target.style.background = 'rgba(0, 158, 227, 0.3)';
+            event.target.style.borderColor = '#009ee3';
+        }
+
+        function openMercadoPago() {
+            const customInput = document.getElementById('customAmount');
+            if (customInput && customInput.value) {
+                donationAmount = parseInt(customInput.value) || 10;
+            }
+
+            // Create Mercado Pago payment link
+            // Using mp.me link format for simple donations
+            const mpLink = `https://link.mercadopago.com.br/englishmasterpro`;
+
+            // Alternative: Direct checkout with preference
+            // For now, redirect to a payment page
+            window.open(mpLink, '_blank');
+
+            // Show thank you message
+            setTimeout(() => {
+                alert('Obrigado pelo seu apoio! 💚\n\nVocê será redirecionado para o Mercado Pago.');
+            }, 500);
         }
 
         // ===== ENCOURAGING MESSAGES =====
