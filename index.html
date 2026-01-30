@@ -754,21 +754,97 @@
             </div>
         </section>
 
-        <!-- Grammar Section (NEW!) -->
+        <!-- Grammar Section (ENHANCED!) -->
         <section class="grammar-section hidden" id="grammarSection">
             <div class="section-header">
                 <button class="btn-back" onclick="goBack()">← Voltar</button>
-                <h2 class="section-title">📖 Gramática</h2>
+                <h2 class="section-title">📖 Gramática & Tempos Verbais</h2>
             </div>
 
             <div class="grammar-tabs">
-                <button class="grammar-tab active" onclick="showGrammarLevel('beginner')">Básico</button>
-                <button class="grammar-tab" onclick="showGrammarLevel('intermediate')">Intermediário</button>
-                <button class="grammar-tab" onclick="showGrammarLevel('advanced')">Avançado</button>
+                <button class="grammar-tab active" onclick="showGrammarLevel('beginner')">🌱 Básico</button>
+                <button class="grammar-tab" onclick="showGrammarLevel('intermediate')">🌿 Intermediário</button>
+                <button class="grammar-tab" onclick="showGrammarLevel('advanced')">🌳 Avançado</button>
             </div>
 
+            <!-- Grammar Overview -->
+            <div class="grammar-overview" id="grammarOverview">
+                <div class="grammar-stats">
+                    <div class="stat-box">
+                        <span class="stat-number" id="grammarCorrect">0</span>
+                        <span class="stat-desc">Corretas</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="grammarTotal">0</span>
+                        <span class="stat-desc">Total</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="grammarPercent">0%</span>
+                        <span class="stat-desc">Precisão</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenses Grid -->
             <div class="grammar-content" id="grammarContent"></div>
+
+            <!-- Tense Detail View -->
+            <div class="tense-detail hidden" id="tenseDetail">
+                <div class="tense-header">
+                    <h3 id="tenseName">Present Simple</h3>
+                    <p id="tenseNamePort">Presente Simples</p>
+                </div>
+
+                <div class="tense-tabs">
+                    <button class="tense-tab active" onclick="showTenseTab('learn')">📚 Aprender</button>
+                    <button class="tense-tab" onclick="showTenseTab('examples')">💬 Exemplos</button>
+                    <button class="tense-tab" onclick="showTenseTab('situations')">🎭 Situações</button>
+                    <button class="tense-tab" onclick="showTenseTab('practice')">✏️ Praticar</button>
+                </div>
+
+                <!-- Learn Tab -->
+                <div class="tense-content" id="tenseLearn">
+                    <div class="usage-card">
+                        <h4>🎯 Quando usar:</h4>
+                        <p id="tenseUsage"></p>
+                        <p class="usage-pt" id="tenseUsagePt"></p>
+                    </div>
+                    <div class="structure-card">
+                        <h4>📝 Estrutura:</h4>
+                        <div class="structure-grid" id="tenseStructure"></div>
+                    </div>
+                </div>
+
+                <!-- Examples Tab -->
+                <div class="tense-content hidden" id="tenseExamples">
+                    <div class="examples-list" id="examplesList"></div>
+                </div>
+
+                <!-- Situations Tab -->
+                <div class="tense-content hidden" id="tenseSituations">
+                    <div class="situations-list" id="situationsList"></div>
+                </div>
+
+                <!-- Practice Tab -->
+                <div class="tense-content hidden" id="tensePractice">
+                    <div class="practice-question" id="practiceQuestion"></div>
+                    <div class="practice-options" id="practiceOptions"></div>
+                    <div class="practice-input-area">
+                        <input type="text" id="grammarInput" placeholder="Digite sua resposta..."
+                            onkeypress="if(event.key==='Enter')checkGrammarAnswer()">
+                        <button class="btn btn-primary" onclick="checkGrammarAnswer()">Verificar</button>
+                    </div>
+                    <div class="practice-feedback hidden" id="practiceFeedback"></div>
+                    <div class="practice-buttons">
+                        <button class="btn btn-secondary" onclick="nextGrammarQuestion()">Próxima →</button>
+                        <button class="btn btn-accent" onclick="generateInfiniteGrammar()">♾️ Gerar Infinito</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-back-tense" onclick="backToTensesList()">← Voltar aos Tempos</button>
+            </div>
         </section>
+
 
         <!-- Irregular Verbs Section (NEW!) -->
         <section class="verbs-section hidden" id="verbsSection">
@@ -1142,182 +1218,18 @@
     <script src="infinite-resources.js"></script>
     <script src="infinite-generator.js"></script>
     <script src="ai-conversation.js"></script>
+    <script src="grammar-practice.js"></script>
     <script src="app.js"></script>
 
-    <!-- Emma Chat System - Clean Interface with Live Subtitles -->
+    <!-- Voice Preload Script -->
     <script>
-        let selectedConversationLevel = 'beginner';
-        let isRecording = false;
-
-        window.initConversation = function () {
-            if (typeof AIConversation !== 'undefined') {
-                AIConversation.init();
-                loadTopics(selectedConversationLevel);
-            }
-        };
-
-        window.selectConversationLevel = function (level) {
-            selectedConversationLevel = level;
-            document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
-            const btn = document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1));
-            if (btn) btn.classList.add('active');
-            loadTopics(level);
-        };
-
-        window.loadTopics = function (level) {
-            const topicGrid = document.getElementById('topicGrid');
-            if (!topicGrid || typeof AIConversation === 'undefined') return;
-            const topics = AIConversation.getSuggestedTopics(level);
-            topicGrid.innerHTML = topics.map(topic =>
-                `<button class="pill" onclick="startConversationTopic('${topic.id}')">${topic.icon} ${topic.name.split(' ').slice(1).join(' ') || topic.name}</button>`
-            ).join('');
-        };
-
-        window.startConversationTopic = function (topicId) {
-            document.getElementById('conversationSetup').classList.add('hidden');
-            document.getElementById('chatContainer').classList.remove('hidden');
-            document.getElementById('chatMessages').innerHTML = '';
-            showSubtitle("Let me think... 🤔");
-
-            setTimeout(() => {
-                const msg = AIConversation.startConversation(topicId, selectedConversationLevel);
-                showEmmaMessage(msg);
-            }, 2500 + Math.random() * 1500);
-        };
-
-        function showEmmaMessage(message) {
-            setEmmaSpeaking(true);
-            showSubtitle(message);
-            addToHistory('ai', message);
-            if (document.getElementById('autoSpeak')?.checked) {
-                speakWithAnimation(message);
-            } else {
-                setTimeout(() => setEmmaSpeaking(false), 3000);
-            }
-        }
-
-        function showSubtitle(text) {
-            const el = document.getElementById('subtitleText');
-            if (el) { el.style.opacity = '0'; setTimeout(() => { el.textContent = text; el.style.opacity = '1'; }, 150); }
-        }
-
-        function setEmmaSpeaking(speaking) {
-            const avatar = document.getElementById('emmaAvatar');
-            const indicator = document.getElementById('speakingIndicator');
-            if (avatar) avatar.classList.toggle('speaking', speaking);
-            if (indicator) indicator.classList.toggle('hidden', !speaking);
-        }
-
-        function speakWithAnimation(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US';
-                u.rate = document.getElementById('slowSpeech')?.checked ? 0.7 : 0.9;
-                u.onstart = () => setEmmaSpeaking(true);
-                u.onend = () => setEmmaSpeaking(false);
-                window.speechSynthesis.speak(u);
-            }
-        }
-
-        function addToHistory(role, message) {
-            const el = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = `history-msg ${role}`;
-            div.textContent = role === 'ai' ? `Emma: ${message}` : `You: ${message}`;
-            el.appendChild(div);
-            el.scrollTop = el.scrollHeight;
-        }
-
-        window.toggleHistory = function () {
-            const panel = document.getElementById('historyPanel');
-            const arrow = document.getElementById('historyArrow');
-            if (panel) { panel.classList.toggle('hidden'); arrow.textContent = panel.classList.contains('hidden') ? '▼' : '▲'; }
-        };
-
-        window.sendChatMessage = async function () {
-            const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-            showSubtitle(`You: "${msg}"`);
-            addToHistory('user', msg);
-            input.value = '';
-
-            setTimeout(() => showSubtitle("Thinking... 💭"), 1000);
-
-            const result = await AIConversation.processMessage(msg);
-
-            if (result.corrections?.length > 0) {
-                const c = result.corrections[0];
-                const popup = document.getElementById('correctionPopup');
-                const text = document.getElementById('correctionText');
-                if (popup && text) {
-                    text.innerHTML = `<b>"${c.wrong}"</b> → <b>"${c.correct}"</b><br><small>${c.explanation}</small>`;
-                    popup.classList.remove('hidden');
-                    setTimeout(() => popup.classList.add('hidden'), 5000);
-                }
-            }
-
-            setTimeout(() => {
-                if (result.encouragement) {
-                    showSubtitle(result.encouragement);
-                    setTimeout(() => showEmmaMessage(result.response), 2000);
-                } else {
-                    showEmmaMessage(result.response);
-                }
-            }, 2500 + Math.random() * 1500);
-        };
-
-        window.handleChatKeyPress = function (e) { if (e.key === 'Enter') sendChatMessage(); };
-
-        window.startVoiceInput = function () {
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SR) { alert('Use Chrome ou Edge para voz.'); return; }
-
-            const voiceBtn = document.getElementById('voiceBtn');
-            const voiceIcon = document.getElementById('voiceIcon');
-
-            if (isRecording) { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; return; }
-
-            const r = new SR();
-            r.lang = 'en-US';
-            r.continuous = false;
-            r.interimResults = true;
-
-            isRecording = true;
-            voiceBtn.classList.add('recording');
-            voiceIcon.textContent = '🔴';
-            showSubtitle("🎤 Listening... Speak in English!");
-
-            try { r.start(); } catch (e) { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; return; }
-
-            r.onresult = (e) => {
-                const t = e.results[0][0].transcript;
-                document.getElementById('chatInput').value = t;
-                showSubtitle(`"${t}"`);
-                if (e.results[0].isFinal) setTimeout(() => sendChatMessage(), 500);
+        // Preload voices for speech synthesis
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
             };
-
-            r.onend = () => { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; };
-            r.onerror = () => { isRecording = false; voiceBtn.classList.remove('recording'); voiceIcon.textContent = '🎤'; };
-        };
-
-        window.toggleChatSettings = function () { document.getElementById('chatSettings')?.classList.toggle('hidden'); };
-
-        window.endConversation = function () {
-            if (typeof AIConversation !== 'undefined') AIConversation.reset();
-            document.getElementById('chatContainer').classList.add('hidden');
-            document.getElementById('conversationSetup').classList.remove('hidden');
-            document.getElementById('chatMessages').innerHTML = '';
-        };
-
-        window.openAIChat = function () {
-            ['heroSection', 'levelSection', 'vocabularySection', 'phrasesSection', 'practiceSection', 'assessmentSection', 'grammarSection', 'verbsSection', 'infiniteSection', 'progressDashboard'].forEach(s => document.getElementById(s)?.classList.add('hidden'));
-            const conv = document.getElementById('conversationSection');
-            if (conv) { conv.classList.remove('hidden'); conv.scrollIntoView({ behavior: 'smooth' }); }
-            if (typeof AIConversation !== 'undefined') { AIConversation.init(); loadTopics(selectedConversationLevel); }
-        };
-
+        }
         console.log('🎤 Emma Chat ready!');
     </script>
 </body>

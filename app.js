@@ -1,3 +1,4 @@
+console.log('📱 app.js loading...');
 // ===== APP STATE =====
 let state = {
     currentLevel: 'beginner',
@@ -212,7 +213,7 @@ function showSection(section) {
         document.getElementById('assessmentResult').classList.add('hidden');
     } else if (section === 'grammar') {
         document.getElementById('grammarSection').classList.remove('hidden');
-        showGrammarLevel('beginner');
+        initGrammar();
     } else if (section === 'verbs') {
         document.getElementById('verbsSection').classList.remove('hidden');
         loadVerbs();
@@ -974,27 +975,7 @@ function showAssessmentResult() {
     saveState();
 }
 
-// ===== GRAMMAR =====
-function showGrammarLevel(level) {
-    document.querySelectorAll('.grammar-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
 
-    const container = document.getElementById('grammarContent');
-    const lessons = grammarLessons[level] || [];
-
-    container.innerHTML = lessons.map(lesson => `
-        <div class="grammar-card">
-            <h3>${lesson.title}</h3>
-            <p class="grammar-content">${lesson.content}</p>
-            <div class="grammar-examples">
-                <h4>Exemplos:</h4>
-                <ul>
-                    ${lesson.examples.map(ex => `<li>"${ex}"</li>`).join('')}
-                </ul>
-            </div>
-        </div>
-    `).join('');
-}
 
 // ===== IRREGULAR VERBS =====
 function loadVerbs() {
@@ -1467,9 +1448,16 @@ let selectedConversationLevel = 'beginner';
 let isVoiceInputActive = false;
 
 function initConversation() {
+    console.log('🔄 initConversation called');
+    console.log('AIConversation exists:', typeof AIConversation !== 'undefined');
+
     if (typeof AIConversation !== 'undefined') {
         AIConversation.init();
         loadTopics(selectedConversationLevel);
+        console.log('✅ Topics should be loaded for level:', selectedConversationLevel);
+    } else {
+        console.error('❌ AIConversation not loaded!');
+        showToast('Erro: Sistema de IA não carregado', 'error');
     }
 }
 
@@ -1478,7 +1466,9 @@ function selectConversationLevel(level) {
 
     // Update button states
     document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('active');
+    document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
+    const levelBtn = document.getElementById('level' + level.charAt(0).toUpperCase() + level.slice(1));
+    if (levelBtn) levelBtn.classList.add('active');
 
     // Load topics for selected level
     loadTopics(level);
@@ -1491,10 +1481,7 @@ function loadTopics(level) {
     const topics = AIConversation.getSuggestedTopics(level);
 
     topicGrid.innerHTML = topics.map(topic => `
-        <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
-            <span class="topic-icon">${topic.icon}</span>
-            <span class="topic-name">${topic.name}</span>
-        </div>
+        <button class="pill" onclick="startConversationTopic('${topic.id}')">${topic.icon} ${topic.name}</button>
     `).join('');
 }
 
@@ -1511,130 +1498,118 @@ function startConversationTopic(topicId) {
     // Clear previous messages
     document.getElementById('chatMessages').innerHTML = '';
 
-    // Start conversation
-    const starterMessage = AIConversation.startConversation(topicId, selectedConversationLevel);
+    // Show thinking message
+    const subtitleText = document.getElementById('subtitleText');
+    if (subtitleText) subtitleText.textContent = "Let me think... 🤔";
 
-    // Add AI message
-    addChatMessage('ai', starterMessage);
+    // Start conversation with delay
+    setTimeout(() => {
+        const starterMessage = AIConversation.startConversation(topicId, selectedConversationLevel);
+        showEmmaMessage(starterMessage);
+    }, 1500);
+}
 
-    // Speak if auto-speak is enabled
+function showEmmaMessage(message) {
+    setEmmaSpeaking(true);
+
+    const subtitleText = document.getElementById('subtitleText');
+    if (subtitleText) subtitleText.textContent = message;
+
+    addToHistory('ai', message);
+
     if (document.getElementById('autoSpeak')?.checked) {
-        setTimeout(() => speak(starterMessage), 500);
-    }
-}
-
-function addChatMessage(role, message) {
-    const chatMessages = document.getElementById('chatMessages');
-
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${role}-message`;
-
-    if (role === 'ai') {
-        messageDiv.innerHTML = `
-            <div class="message-avatar">👩‍🏫</div>
-            <div class="message-content">
-                <div class="message-text">${message}</div>
-                <button class="btn-speak-msg" onclick="speak('${message.replace(/'/g, "\\'")}')">🔊</button>
-            </div>
-        `;
+        speakWithAnimation(message);
     } else {
-        messageDiv.innerHTML = `
-            <div class="message-content">
-                <div class="message-text">${message}</div>
-            </div>
-            <div class="message-avatar">👤</div>
-        `;
+        setTimeout(() => setEmmaSpeaking(false), 3000);
     }
-
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function sendChatMessage() {
+function setEmmaSpeaking(speaking) {
+    const avatar = document.getElementById('emmaAvatar');
+    const indicator = document.getElementById('speakingIndicator');
+    if (avatar) avatar.classList.toggle('speaking', speaking);
+    if (indicator) indicator.classList.toggle('hidden', !speaking);
+}
+
+function speakWithAnimation(text) {
+    if (!('speechSynthesis' in window)) {
+        setTimeout(() => setEmmaSpeaking(false), 3000);
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = document.getElementById('slowSpeech')?.checked ? 0.7 : 0.9;
+
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(v => v.lang.startsWith('en-US')) || voices.find(v => v.lang.startsWith('en'));
+    if (englishVoice) u.voice = englishVoice;
+
+    u.onstart = () => setEmmaSpeaking(true);
+    u.onend = () => setEmmaSpeaking(false);
+    u.onerror = () => setEmmaSpeaking(false);
+
+    window.speechSynthesis.speak(u);
+}
+
+function addToHistory(role, message) {
+    const el = document.getElementById('chatMessages');
+    if (!el) return;
+    const div = document.createElement('div');
+    div.className = `history-msg ${role}`;
+    div.textContent = role === 'ai' ? `Emma: ${message}` : `You: ${message}`;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+}
+
+async function sendChatMessage() {
     const input = document.getElementById('chatInput');
     const message = input.value.trim();
 
     if (!message) return;
 
-    // Add user message
-    addChatMessage('user', message);
+    const subtitleText = document.getElementById('subtitleText');
+    if (subtitleText) subtitleText.textContent = `You: "${message}"`;
+
+    addToHistory('user', message);
     input.value = '';
 
-    // Process with AI
+    setTimeout(() => {
+        if (subtitleText) subtitleText.textContent = "Thinking... 💭";
+    }, 500);
+
     if (typeof AIConversation !== 'undefined') {
-        const result = AIConversation.processMessage(message);
+        const result = await AIConversation.processMessage(message);
 
-        // Show corrections if enabled and there are any
-        if (result.corrections.length > 0 && document.getElementById('showCorrections')?.checked) {
-            showGrammarCorrection(result.corrections);
-        }
-
-        // Show encouragement if any
-        if (result.encouragement) {
-            showEncouragement(result.encouragement);
-        }
-
-        // Add AI response with slight delay for natural feel
-        setTimeout(() => {
-            addChatMessage('ai', result.response);
-
-            // Speak if auto-speak enabled
-            if (document.getElementById('autoSpeak')?.checked) {
-                const rate = document.getElementById('slowSpeech')?.checked ? 0.7 : 0.85;
-                speakWithRate(result.response, rate);
+        // Show corrections if enabled
+        if (result.corrections && result.corrections.length > 0 && document.getElementById('showCorrections')?.checked) {
+            const popup = document.getElementById('correctionPopup');
+            const text = document.getElementById('correctionText');
+            if (popup && text) {
+                const c = result.corrections[0];
+                text.innerHTML = `<b>"${c.wrong}"</b> → <b>"${c.correct}"</b><br><small>${c.explanation}</small>`;
+                popup.classList.remove('hidden');
+                setTimeout(() => popup.classList.add('hidden'), 5000);
             }
-        }, 800);
+        }
+
+        setTimeout(() => {
+            if (result.encouragement && subtitleText) {
+                subtitleText.textContent = result.encouragement;
+                setTimeout(() => showEmmaMessage(result.response), 2000);
+            } else {
+                showEmmaMessage(result.response);
+            }
+        }, 1500);
     }
-}
-
-function speakWithRate(text, rate = 0.85) {
-    if (!('speechSynthesis' in window)) return;
-
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = rate;
-    speechSynthesis.speak(utterance);
 }
 
 function handleChatKeyPress(event) {
     if (event.key === 'Enter') {
         sendChatMessage();
     }
-}
-
-function showGrammarCorrection(corrections) {
-    const container = document.getElementById('grammarCorrection');
-    const content = document.getElementById('correctionContent');
-
-    content.innerHTML = corrections.map(c => `
-        <div class="correction-item">
-            <span class="wrong">❌ "${c.wrong}"</span>
-            <span class="arrow">→</span>
-            <span class="correct">✅ "${c.correct}"</span>
-            <p class="explanation">💡 ${c.explanation}</p>
-        </div>
-    `).join('');
-
-    container.classList.remove('hidden');
-
-    // Auto-hide after 8 seconds
-    setTimeout(() => hideGrammarCorrection(), 8000);
-}
-
-function hideGrammarCorrection() {
-    document.getElementById('grammarCorrection').classList.add('hidden');
-}
-
-function showEncouragement(text) {
-    const container = document.getElementById('encouragement');
-    document.getElementById('encouragementText').textContent = text;
-    container.classList.remove('hidden');
-
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-        container.classList.add('hidden');
-    }, 3000);
 }
 
 function startVoiceInput() {
@@ -1645,54 +1620,71 @@ function startVoiceInput() {
         return;
     }
 
+    const voiceBtn = document.getElementById('voiceBtn');
+    const voiceIcon = document.getElementById('voiceIcon');
+
+    if (isVoiceInputActive) {
+        isVoiceInputActive = false;
+        if (voiceBtn) voiceBtn.classList.remove('recording');
+        if (voiceIcon) voiceIcon.textContent = '🎤';
+        return;
+    }
+
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
     recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
 
-    const voiceBtn = document.getElementById('voiceBtn');
-    voiceBtn.classList.add('recording');
     isVoiceInputActive = true;
+    if (voiceBtn) voiceBtn.classList.add('recording');
+    if (voiceIcon) voiceIcon.textContent = '🔴';
 
-    showToast('🎤 Fale sua mensagem em inglês...', 'info');
+    const subtitleText = document.getElementById('subtitleText');
+    if (subtitleText) subtitleText.textContent = "🎤 Listening... Speak in English!";
 
     try {
         recognition.start();
     } catch (e) {
-        voiceBtn.classList.remove('recording');
-        showToast('Erro ao iniciar reconhecimento de voz', 'error');
+        isVoiceInputActive = false;
+        if (voiceBtn) voiceBtn.classList.remove('recording');
+        if (voiceIcon) voiceIcon.textContent = '🎤';
         return;
     }
 
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         document.getElementById('chatInput').value = transcript;
-        voiceBtn.classList.remove('recording');
-        isVoiceInputActive = false;
-
-        // Auto-send after voice input
-        setTimeout(() => sendChatMessage(), 300);
-    };
-
-    recognition.onerror = (event) => {
-        voiceBtn.classList.remove('recording');
-        isVoiceInputActive = false;
-
-        if (event.error === 'no-speech') {
-            showToast('Nenhuma fala detectada. Tente novamente.', 'warning');
-        } else {
-            showToast('Erro no reconhecimento: ' + event.error, 'error');
+        if (subtitleText) subtitleText.textContent = `"${transcript}"`;
+        if (event.results[0].isFinal) {
+            setTimeout(() => sendChatMessage(), 500);
         }
     };
 
     recognition.onend = () => {
-        voiceBtn.classList.remove('recording');
         isVoiceInputActive = false;
+        if (voiceBtn) voiceBtn.classList.remove('recording');
+        if (voiceIcon) voiceIcon.textContent = '🎤';
+    };
+
+    recognition.onerror = () => {
+        isVoiceInputActive = false;
+        if (voiceBtn) voiceBtn.classList.remove('recording');
+        if (voiceIcon) voiceIcon.textContent = '🎤';
     };
 }
 
+function toggleHistory() {
+    const panel = document.getElementById('historyPanel');
+    const arrow = document.getElementById('historyArrow');
+    if (panel) {
+        panel.classList.toggle('hidden');
+        if (arrow) arrow.textContent = panel.classList.contains('hidden') ? '▼' : '▲';
+    }
+}
+
 function toggleChatSettings() {
-    document.getElementById('chatSettings').classList.toggle('hidden');
+    const settings = document.getElementById('chatSettings');
+    if (settings) settings.classList.toggle('hidden');
 }
 
 function endConversation() {
@@ -1707,157 +1699,279 @@ function endConversation() {
     showToast('Conversa encerrada. Escolha um novo tema!', 'info');
 }
 
-// Initialize conversation when section is shown
-document.addEventListener('DOMContentLoaded', () => {
-    // Will be called when conversation section is shown
-});
-
-// ===== AI CONVERSATION FUNCTIONS =====
-let selectedConversationLevel = 'beginner';
-
-function initConversation() {
-    if (typeof AIConversation !== 'undefined') {
-        AIConversation.init();
-        loadTopics(selectedConversationLevel);
-    } else {
-        console.error('AIConversation not loaded!');
-    }
+function openAIChat() {
+    showSection('conversation');
 }
 
-function selectConversationLevel(level) {
-    selectedConversationLevel = level;
-    document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
-    const btnId = 'level' + level.charAt(0).toUpperCase() + level.slice(1);
-    const btn = document.getElementById(btnId);
-    if (btn) btn.classList.add('active');
-    loadTopics(level);
+// ===== ENHANCED GRAMMAR PRACTICE SYSTEM =====
+let currentGrammarLevel = 'beginner';
+let currentTenseId = null;
+let currentGrammarQuestion = null;
+
+function showGrammarLevel(level) {
+    currentGrammarLevel = level;
+
+    // Update tabs
+    document.querySelectorAll('.grammar-tab').forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Hide detail view, show grid
+    document.getElementById('tenseDetail').classList.add('hidden');
+    document.getElementById('grammarContent').classList.remove('hidden');
+    document.getElementById('grammarOverview').classList.remove('hidden');
+
+    // Update stats
+    updateGrammarStats();
+
+    // Load tenses for level
+    loadGrammarTenses(level);
 }
 
-function loadTopics(level) {
-    const topicGrid = document.getElementById('topicGrid');
-    if (!topicGrid || typeof AIConversation === 'undefined') return;
+function loadGrammarTenses(level) {
+    const container = document.getElementById('grammarContent');
+    if (!container || typeof GrammarPractice === 'undefined') return;
 
-    const topics = AIConversation.getSuggestedTopics(level);
-    topicGrid.innerHTML = topics.map(topic => `
-        <div class="topic-card" onclick="startConversationTopic('${topic.id}')">
-            <span class="topic-icon">${topic.icon}</span>
-            <span class="topic-name">${topic.name}</span>
+    const tenses = GrammarPractice.getTensesByLevel(level);
+
+    container.innerHTML = `
+        <div class="tenses-grid">
+            ${tenses.map(tense => `
+                <div class="tense-card" onclick="openTenseDetail('${tense.id}')">
+                    <span class="tense-icon">${tense.icon}</span>
+                    <h3>${tense.name}</h3>
+                    <p>${tense.namePort}</p>
+                    <div class="tense-preview">${tense.usage.substring(0, 50)}...</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function openTenseDetail(tenseId) {
+    if (typeof GrammarPractice === 'undefined') return;
+
+    currentTenseId = tenseId;
+    const tense = GrammarPractice.getTense(tenseId);
+    if (!tense) return;
+
+    // Hide grid, show detail
+    document.getElementById('grammarContent').classList.add('hidden');
+    document.getElementById('grammarOverview').classList.add('hidden');
+    document.getElementById('tenseDetail').classList.remove('hidden');
+
+    // Populate header
+    document.getElementById('tenseName').textContent = `${tense.icon} ${tense.name}`;
+    document.getElementById('tenseNamePort').textContent = tense.namePort;
+
+    // Populate learn tab
+    document.getElementById('tenseUsage').textContent = tense.usage;
+    document.getElementById('tenseUsagePt').textContent = tense.usagePort;
+
+    // Populate structure
+    const structureHtml = Object.entries(tense.structure).map(([type, formula]) => `
+        <div class="structure-item">
+            <span class="structure-type">${type === 'affirmative' ? '✅ Afirmativa' : type === 'negative' ? '❌ Negativa' : '❓ Pergunta'}</span>
+            <span class="structure-formula">${formula}</span>
         </div>
     `).join('');
+    document.getElementById('tenseStructure').innerHTML = structureHtml;
+
+    // Populate examples
+    const examplesHtml = tense.examples.map(ex => `
+        <div class="example-card">
+            <div class="example-context">${ex.context}</div>
+            <div class="example-en">"${ex.en}"</div>
+            <div class="example-pt">"${ex.pt}"</div>
+            <button class="btn-icon" onclick="speak('${ex.en.replace(/'/g, "\\'")}')">🔊</button>
+        </div>
+    `).join('');
+    document.getElementById('examplesList').innerHTML = examplesHtml;
+
+    // Populate situations
+    const situationsHtml = tense.situations.map(sit => `
+        <div class="situation-card">
+            <div class="situation-context">🎭 ${sit.situation}</div>
+            <div class="situation-prompt">${sit.prompt}</div>
+            <div class="situation-answer">Resposta: <strong>${sit.answer}</strong></div>
+        </div>
+    `).join('');
+    document.getElementById('situationsList').innerHTML = situationsHtml;
+
+    // Reset to learn tab
+    showTenseTab('learn');
+
+    // Load first practice question
+    loadGrammarQuestion();
 }
 
-function startConversationTopic(topicId) {
-    if (typeof AIConversation === 'undefined') {
-        showToast('Sistema de conversa não carregado', 'error');
+function showTenseTab(tab) {
+    // Update tabs
+    document.querySelectorAll('.tense-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Hide all contents
+    document.getElementById('tenseLearn').classList.add('hidden');
+    document.getElementById('tenseExamples').classList.add('hidden');
+    document.getElementById('tenseSituations').classList.add('hidden');
+    document.getElementById('tensePractice').classList.add('hidden');
+
+    // Show selected
+    const contentMap = {
+        'learn': 'tenseLearn',
+        'examples': 'tenseExamples',
+        'situations': 'tenseSituations',
+        'practice': 'tensePractice'
+    };
+    document.getElementById(contentMap[tab]).classList.remove('hidden');
+}
+
+function loadGrammarQuestion() {
+    if (!currentTenseId || typeof GrammarPractice === 'undefined') return;
+
+    currentGrammarQuestion = GrammarPractice.getRandomQuestion(currentTenseId);
+    if (!currentGrammarQuestion) return;
+
+    const questionEl = document.getElementById('practiceQuestion');
+    const optionsEl = document.getElementById('practiceOptions');
+    const feedbackEl = document.getElementById('practiceFeedback');
+    const inputEl = document.getElementById('grammarInput');
+
+    // Show question
+    let questionHtml = `<p class="question-text">${currentGrammarQuestion.question}</p>`;
+    if (currentGrammarQuestion.situation) {
+        questionHtml = `
+            <p class="situation-context">🎭 Situação: ${currentGrammarQuestion.situation}</p>
+            <p class="question-text">${currentGrammarQuestion.question}</p>
+        `;
+    }
+    questionEl.innerHTML = questionHtml;
+
+    // Show options if available
+    if (currentGrammarQuestion.options) {
+        optionsEl.innerHTML = currentGrammarQuestion.options.map((opt, i) => `
+            <button class="grammar-option" onclick="selectGrammarOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>
+        `).join('');
+        optionsEl.classList.remove('hidden');
+    } else {
+        optionsEl.innerHTML = '';
+        optionsEl.classList.add('hidden');
+    }
+
+    // Reset input and feedback
+    inputEl.value = '';
+    feedbackEl.classList.add('hidden');
+}
+
+function selectGrammarOption(btn, answer) {
+    const correct = GrammarPractice.checkAnswer(answer, currentGrammarQuestion.answer);
+
+    // Disable all options
+    document.querySelectorAll('.grammar-option').forEach(opt => {
+        opt.disabled = true;
+        if (opt.textContent === currentGrammarQuestion.answer) {
+            opt.classList.add('correct');
+        }
+    });
+
+    if (correct) {
+        btn.classList.add('correct');
+        showGrammarFeedback(true, answer);
+    } else {
+        btn.classList.add('incorrect');
+        showGrammarFeedback(false, answer);
+    }
+
+    updateGrammarStats();
+}
+
+function checkGrammarAnswer() {
+    const input = document.getElementById('grammarInput');
+    const answer = input.value.trim();
+    if (!answer) return;
+
+    const correct = GrammarPractice.checkAnswer(answer, currentGrammarQuestion.answer);
+    showGrammarFeedback(correct, answer);
+    updateGrammarStats();
+}
+
+function showGrammarFeedback(correct, userAnswer) {
+    const feedbackEl = document.getElementById('practiceFeedback');
+
+    if (correct) {
+        feedbackEl.innerHTML = `
+            <div class="feedback-correct">
+                ✅ Correto! Parabéns!
+            </div>
+        `;
+        feedbackEl.className = 'practice-feedback feedback-success';
+    } else {
+        feedbackEl.innerHTML = `
+            <div class="feedback-incorrect">
+                ❌ Sua resposta: "${userAnswer}"<br>
+                ✅ Resposta correta: "${currentGrammarQuestion.answer}"
+            </div>
+        `;
+        feedbackEl.className = 'practice-feedback feedback-error';
+    }
+
+    feedbackEl.classList.remove('hidden');
+}
+
+function nextGrammarQuestion() {
+    loadGrammarQuestion();
+}
+
+function generateInfiniteGrammar() {
+    if (!currentTenseId || typeof GrammarPractice === 'undefined') return;
+
+    currentGrammarQuestion = GrammarPractice.generateInfiniteExercise(currentTenseId);
+    if (!currentGrammarQuestion) {
+        showToast('Erro ao gerar exercício', 'error');
         return;
     }
 
-    document.getElementById('conversationSetup').classList.add('hidden');
-    document.getElementById('chatContainer').classList.remove('hidden');
-    document.getElementById('chatMessages').innerHTML = '';
+    const questionEl = document.getElementById('practiceQuestion');
+    const optionsEl = document.getElementById('practiceOptions');
+    const feedbackEl = document.getElementById('practiceFeedback');
+    const inputEl = document.getElementById('grammarInput');
 
-    const starterMessage = AIConversation.startConversation(topicId, selectedConversationLevel);
-    addChatMessage('ai', starterMessage);
+    questionEl.innerHTML = `
+        <p class="question-label">♾️ Exercício Gerado:</p>
+        <p class="question-text">${currentGrammarQuestion.question}</p>
+    `;
 
-    const autoSpeak = document.getElementById('autoSpeak');
-    if (autoSpeak && autoSpeak.checked) {
-        setTimeout(() => speak(starterMessage), 500);
+    optionsEl.innerHTML = '';
+    optionsEl.classList.add('hidden');
+
+    inputEl.value = '';
+    feedbackEl.classList.add('hidden');
+
+    showToast('♾️ Novo exercício gerado!', 'info');
+}
+
+function backToTensesList() {
+    document.getElementById('tenseDetail').classList.add('hidden');
+    document.getElementById('grammarContent').classList.remove('hidden');
+    document.getElementById('grammarOverview').classList.remove('hidden');
+    currentTenseId = null;
+}
+
+function updateGrammarStats() {
+    if (typeof GrammarPractice === 'undefined') return;
+
+    const stats = GrammarPractice.getStats();
+    document.getElementById('grammarCorrect').textContent = stats.correct;
+    document.getElementById('grammarTotal').textContent = stats.total;
+    document.getElementById('grammarPercent').textContent = stats.percentage + '%';
+}
+
+// Initialize grammar on section show
+function initGrammar() {
+    if (typeof GrammarPractice !== 'undefined') {
+        GrammarPractice.init();
+        loadGrammarTenses('beginner');
+        updateGrammarStats();
     }
 }
 
-function addChatMessage(role, message) {
-    const chatMessages = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${role}-message`;
-
-    const safeMessage = message.replace(/'/g, "\\'").replace(/"/g, '\\"');
-
-    if (role === 'ai') {
-        messageDiv.innerHTML = `
-            <div class="message-avatar">👩‍🏫</div>
-            <div class="message-content">
-                <div class="message-text">${message}</div>
-                <button class="btn-speak-msg" onclick="speak('${safeMessage}')">🔊</button>
-            </div>
-        `;
-    } else {
-        messageDiv.innerHTML = `
-            <div class="message-content">
-                <div class="message-text">${message}</div>
-            </div>
-            <div class="message-avatar">👤</div>
-        `;
-    }
-
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-async function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    if (!message) return;
-
-    addChatMessage('user', message);
-    input.value = '';
-
-    if (typeof AIConversation !== 'undefined') {
-        const result = await AIConversation.processMessage(message);
-
-        const showCorrections = document.getElementById('showCorrections');
-        if (result.corrections && result.corrections.length > 0 && showCorrections && showCorrections.checked) {
-            showGrammarCorrection(result.corrections);
-        }
-
-        if (result.encouragement) {
-            showEncouragement(result.encouragement);
-        }
-
-        setTimeout(() => {
-            addChatMessage('ai', result.response);
-            const autoSpeak = document.getElementById('autoSpeak');
-            if (autoSpeak && autoSpeak.checked) {
-                speak(result.response);
-            }
-        }, 600);
-    }
-}
-
-function handleChatKeyPress(event) {
-    if (event.key === 'Enter') {
-        sendChatMessage();
-    }
-}
-
-function showGrammarCorrection(corrections) {
-    const container = document.getElementById('grammarCorrection');
-    const content = document.getElementById('correctionContent');
-    if (!container || !content) return;
-
-    content.innerHTML = corrections.map(c => `
-        <div class="correction-item">
-            <span class="wrong">❌ "${c.wrong}"</span>
-            <span class="arrow">→</span>
-            <span class="correct">✅ "${c.correct}"</span>
-            <p class="explanation">💡 ${c.explanation}</p>
-        </div>
-    `).join('');
-
-    container.classList.remove('hidden');
-    setTimeout(() => hideGrammarCorrection(), 8000);
-}
-
-function hideGrammarCorrection() {
-    const el = document.getElementById('grammarCorrection');
-    if (el) el.classList.add('hidden');
-}
-
-function showEncouragement(text) {
-    const container = document.getElementById('encouragement');
-    const textEl = document.getElementById('encouragementText');
-    if (!container || !textEl) return;
-
-    textEl.textContent = text;
-    container.classList.remove('hidden');
-    setTimeout(() => container.classList.add('hidden'), 3000);
-}
+console.log('✅ app.js fully loaded! All functions ready.');

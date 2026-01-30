@@ -1,0 +1,3517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Master Pro - Aprenda Inglês com IA</title>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14b8a6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="English Master">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/180x180/14b8a6/ffffff?text=EN">
+
+    <!-- SEO -->
+    <meta name="description"
+        content="Aprenda inglês com IA - Vocabulário infinito, Quiz, Pronúncia, Chat e muito mais! 100% Gratuito.">
+    <meta name="keywords" content="aprender inglês, english, inglês grátis, curso de inglês, vocabulário inglês">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Study-friendly color palette */
+            --primary: #14b8a6;
+            --primary-glow: rgba(20, 184, 166, 0.5);
+            --secondary: #8b5cf6;
+            --accent: #f97316;
+            --accent-2: #ec4899;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --dark: #0c1222;
+            --dark-2: #111827;
+            --dark-3: #1e293b;
+            --light: #f1f5f9;
+            --gray: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Performance optimizations */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Global transitions for smoother feel */
+        *,
+        *::before,
+        *::after {
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* Animated Gradient Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(20, 184, 166, 0.15), transparent 50%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.12), transparent 50%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(249, 115, 22, 0.08), transparent 50%);
+            animation: bgPulse 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes bgPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Floating Particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(20, 184, 166, 0.3), transparent),
+                radial-gradient(2px 2px at 40% 70%, rgba(139, 92, 246, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 20%, rgba(249, 115, 22, 0.3), transparent),
+                radial-gradient(2px 2px at 80% 60%, rgba(20, 184, 166, 0.3), transparent),
+                radial-gradient(2px 2px at 10% 80%, rgba(139, 92, 246, 0.3), transparent),
+                radial-gradient(2px 2px at 90% 40%, rgba(249, 115, 22, 0.3), transparent);
+            background-size: 100% 100%;
+            animation: floatParticles 20s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes floatParticles {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        /* Smooth animations for everything */
+        *,
+        *::before,
+        *::after {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px var(--primary-glow);
+            }
+
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 0 40px var(--primary-glow);
+            }
+        }
+
+        @keyframes rainbow {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.5s ease forwards;
+        }
+
+        .animate-slideInLeft {
+            animation: slideInLeft 0.5s ease forwards;
+        }
+
+        .animate-slideInRight {
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 20px rgba(20, 184, 166, 0.4);
+            animation: btnGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes btnGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(20, 184, 166, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(20, 184, 166, 0.6), 0 0 50px rgba(20, 184, 166, 0.2);
+            }
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 40px rgba(20, 184, 166, 0.5), 0 0 60px rgba(20, 184, 166, 0.3);
+            animation: none;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(20, 184, 166, 0.1);
+            box-shadow: 0 0 25px rgba(20, 184, 166, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 60%);
+            animation: float 8s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 60%);
+            animation: float 10s ease-in-out infinite reverse;
+            filter: blur(40px);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.05);
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            padding: 100px 5%;
+            background: var(--dark);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 40px rgba(99, 102, 241, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            position: relative;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(10px);
+        }
+
+        .feature-card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* ===== PRICING ===== */
+        .pricing {
+            padding: 100px 5%;
+            background: linear-gradient(180deg, var(--dark) 0%, #1e1b4b 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: '⭐ Mais Popular';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .plan-billing {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .plan-features li.disabled {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .plan-features li.disabled::before {
+            content: '✗';
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-switch a {
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            padding: 30px 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 5%;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card h4 {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dashboard-content {
+            padding: 30px 5%;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .module-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 40px rgba(20, 184, 166, 0.15);
+        }
+
+        .module-card:hover::before {
+            opacity: 1;
+        }
+
+        .module-card:active {
+            transform: translateY(-4px) scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        .module-card.locked {
+            opacity: 0.5;
+        }
+
+        .module-card.locked::after {
+            content: '🔒 Premium';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--warning), var(--accent));
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            animation: breathe 2s ease-in-out infinite;
+        }
+
+        .module-icon {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(20, 184, 166, 0.3));
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-8px) rotate(5deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(-8px) rotate(-5deg);
+            }
+        }
+
+        .module-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .module-card p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .module-progress {
+            margin-top: 20px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .module-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .module-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* ===== LEARNING SECTION ===== */
+        .learning-section {
+            display: none;
+            padding: 100px 5% 50px;
+            min-height: 100vh;
+        }
+
+        .learning-section.active {
+            display: block;
+        }
+
+        .learning-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .learning-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .avatar.speaking {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 10px rgba(99, 102, 241, 0.2);
+            }
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 20px;
+        }
+
+        .message.max {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user {
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 15px 20px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Category buttons */
+        .cat-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+            border-color: transparent !important;
+            color: white !important;
+        }
+
+        /* Success/Error visual feedback */
+        .btn.correct {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            animation: successPop 0.4s ease;
+        }
+
+        .btn.wrong {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Celebration confetti effect */
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Smooth loading states */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Recording button animation */
+        .recording {
+            animation: recordPulse 1s ease-in-out infinite !important;
+            background: var(--danger) !important;
+        }
+
+        @keyframes recordPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+        }
+
+        /* Encouraging messages */
+        .encouragement {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(20, 184, 166, 0.2));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        /* Tooltip style */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: var(--dark-3);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        .icon-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .icon-btn.recording {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            animation: pulse 1s infinite;
+        }
+
+        /* Grammar Card */
+        .grammar-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grammar-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .question-context {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.6rem;
+            margin-bottom: 35px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            gap: 16px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 22px 25px;
+            color: white;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn:hover::before {
+            opacity: 1;
+        }
+
+        .option-btn.correct {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--success);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .option-btn.correct::before {
+            opacity: 1;
+            background: var(--success);
+        }
+
+        .option-btn.wrong {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: var(--danger);
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.2);
+        }
+
+        .option-btn.wrong::before {
+            opacity: 1;
+            background: var(--danger);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        .feedback.wrong {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 5%;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-image {
+                display: none;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+        }
+
+        /* Hide/Show states */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">🎓 English Master Pro</div>
+        <div class="nav-links" id="navLinks">
+            <a href="#features">Recursos</a>
+            <a href="#pricing">Planos</a>
+            <button class="btn btn-outline" onclick="showModal('loginModal')">Entrar</button>
+            <button class="btn btn-primary" onclick="showModal('signupModal')">Começar Grátis</button>
+        </div>
+        <div class="nav-links hidden" id="userNav">
+            <span id="userEmail"></span>
+            <button class="btn btn-outline" onclick="logout()">Sair</button>
+        </div>
+    </nav>
+
+    <!-- LANDING PAGE -->
+    <div id="landingPage">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">🚀 Novo: IA Conversacional</div>
+                <h1>Aprenda Inglês com <span>Inteligência Artificial</span></h1>
+                <p>Pratique conversação com nossa IA Max, domine gramática com questões ilimitadas, e evolua seu
+                    vocabulário. Tudo em uma plataforma premium.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showModal('signupModal')">Começar Grátis →</button>
+                    <button class="btn btn-outline" onclick="showModal('loginModal')">Já tenho conta</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Usuários Ativos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">1M+</div>
+                        <div class="stat-label">Questões Geradas</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">4.9★</div>
+                        <div class="stat-label">Avaliação</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="hero_illustration.png" alt="English Learning"
+                    style="width: 100%; height: 100%; object-fit: contain; animation: float 4s ease-in-out infinite;">
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features" id="features">
+            <h2 class="section-title">Recursos Poderosos</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Conversa com IA</h3>
+                    <p>Pratique conversação real com Max, nossa IA que fala, escuta e corrige seus erros em tempo real.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3>Gramática Infinita</h3>
+                    <p>Questões geradas por IA que se adaptam ao seu nível. Nunca vai faltar exercício!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Vocabulário 3000+</h3>
+                    <p>Mais de 3000 palavras organizadas por tema e nível, com pronúncia e exemplos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎧</div>
+                    <h3>Listening Prático</h3>
+                    <p>Treine sua compreensão auditiva com exercícios interativos e feedback imediato.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎤</div>
+                    <h3>Reconhecimento de Voz</h3>
+                    <p>Fale em inglês e nossa IA analisa sua pronúncia e sugere melhorias.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Progresso Detalhado</h3>
+                    <p>Acompanhe sua evolução com métricas, conquistas e relatórios personalizados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="pricing" id="pricing">
+            <h2 class="section-title">Totalmente Gratuito!</h2>
+            <div class="pricing-grid" style="max-width: 500px; margin: 0 auto;">
+                <div class="pricing-card popular" style="position: relative;">
+                    <div class="plan-name">🎉 Acesso Completo</div>
+                    <div class="plan-price">GRÁTIS<span></span></div>
+                    <div class="plan-billing">Todos os recursos liberados!</div>
+                    <ul class="plan-features">
+                        <li>✅ Vocabulário completo 3000+</li>
+                        <li>✅ Gramática ilimitada com IA</li>
+                        <li>✅ Conversas ilimitadas com Max</li>
+                        <li>✅ Listening ilimitado</li>
+                        <li>✅ Reconhecimento de voz</li>
+                        <li>✅ Quiz infinito</li>
+                        <li>✅ Tutoriais completos</li>
+                        <li>✅ Relatórios de progresso</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="showModal('signupModal')">Começar
+                        Agora - É Grátis!</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2024 English Master Pro. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h2>👋 Bem-vindo de volta!</h2>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+            <div class="modal-switch">
+                Não tem conta? <a onclick="switchModal('loginModal', 'signupModal')">Criar conta</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <h2>🚀 Criar Conta</h2>
+            <form onsubmit="signup(event)">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="signupName" required placeholder="Seu nome">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="signupPassword" required placeholder="Mínimo 6 caracteres" minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Criar Conta Grátis</button>
+            </form>
+            <div class="modal-switch">
+                Já tem conta? <a onclick="switchModal('signupModal', 'loginModal')">Entrar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DONATION MODAL (Optional) -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal" style="max-width: 500px;">
+            <h2>☕ Apoie o Projeto</h2>
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">
+                    Este app é <strong>100% gratuito</strong>! Mas se você quiser contribuir para manter o projeto
+                    ativo, qualquer valor é bem-vindo! 💚
+                </p>
+
+                <div
+                    style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2);">
+                    <p style="margin-bottom: 15px; font-weight: 600;">📱 Doe via PIX (opcional)</p>
+                    <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                        <img id="pixQrCode"
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Furtadoc293@gmail.com"
+                            alt="QR Code PIX" style="width: 150px; height: 150px;">
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--primary); word-break: break-all;" id="pixKeyDisplay">
+                        Chave PIX: Furtadoc293@gmail.com</p>
+                    <button class="btn btn-outline" onclick="copyPixKey()" style="margin-top: 15px;">📋 Copiar Chave
+                        PIX</button>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                    ❤️ Obrigado por usar o English Master Pro!
+                </p>
+            </div>
+            <button class="btn btn-primary" onclick="hideModal('paymentModal')" style="width: 100%;">Continuar
+                Estudando</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-header"
+            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h1 class="welcome-text">👋 Olá, <span id="userName">Usuário</span>!</h1>
+                <p style="color: rgba(255,255,255,0.6);">Continue sua jornada de aprendizado</p>
+            </div>
+            <button class="btn btn-outline" onclick="openPaymentModal()" style="font-size: 0.85rem;">
+                ☕ Apoiar o Projeto
+            </button>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h4>🔥 Sequência</h4>
+                <div class="value" id="streakDays">0 dias</div>
+            </div>
+            <div class="stat-card">
+                <h4>📚 Palavras Aprendidas</h4>
+                <div class="value" id="wordsLearned">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>✅ Questões Corretas</h4>
+                <div class="value" id="questionsCorrect">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>⏱️ Tempo de Estudo</h4>
+                <div class="value" id="studyTime">0min</div>
+            </div>
+        </div>
+
+        <!-- Daily Motivation -->
+        <div
+            style="background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(20, 184, 166, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 30px; animation: fadeInUp 0.6s ease;">
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <span style="font-size: 2.5rem;">💡</span>
+                <div>
+                    <p style="font-weight: 600; color: var(--primary);">Dica do Dia</p>
+                    <p id="dailyTip" style="color: rgba(255,255,255,0.8);">Pratique um pouco todos os dias - a
+                        consistência é a chave para fluência!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <h2 style="margin-bottom: 20px;">Módulos de Aprendizado</h2>
+            <div class="modules-grid">
+                <div class="module-card" onclick="openModule('chat')">
+                    <div class="module-icon">🤖</div>
+                    <h3>Conversar com Max</h3>
+                    <p>Pratique inglês em conversas reais com IA</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 35%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('grammar')">
+                    <div class="module-icon">📖</div>
+                    <h3>Gramática com IA</h3>
+                    <p>Questões infinitas geradas por IA</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('vocab')">
+                    <div class="module-icon">📚</div>
+                    <h3>Vocabulário</h3>
+                    <p>3000+ palavras para aprender</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 20%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('listening')">
+                    <div class="module-icon">🎧</div>
+                    <h3>Listening</h3>
+                    <p>Treine sua compreensão auditiva</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 15%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('quiz')">
+                    <div class="module-icon">🎯</div>
+                    <h3>Quiz Infinito</h3>
+                    <p>Perguntas gerais de inglês com IA</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('tutorials')">
+                    <div class="module-icon">📘</div>
+                    <h3>Grammar Tutorials</h3>
+                    <p>Explicações completas em inglês</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('wordgame')" style="border: 2px solid var(--accent);">
+                    <div class="module-icon">🎮</div>
+                    <h3>Jogo de Palavras</h3>
+                    <p>Adivinhe e ganhe pontos!</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('pronunciation')"
+                    style="border: 2px solid var(--secondary);">
+                    <div class="module-icon">🗣️</div>
+                    <h3>Pronúncia</h3>
+                    <p>Compare sua pronúncia com a correta</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="module-card" onclick="openModule('progress')" style="border: 2px solid var(--primary);">
+                    <div class="module-icon">📊</div>
+                    <h3>Meu Progresso</h3>
+                    <p>Veja sua evolução</p>
+                    <div class="module-progress">
+                        <div class="module-progress-bar" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT MODULE -->
+    <div class="learning-section" id="chatModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>🤖 Conversa com Max</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="avatar" id="maxAvatar">👨‍🏫</div>
+                    <div>
+                        <h3>Max</h3>
+                        <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Seu professor de inglês</p>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message in English..."
+                        onkeypress="handleChatEnter(event)">
+                    <button class="icon-btn" id="voiceBtn" onclick="startVoice()">🎤</button>
+                    <button class="icon-btn" onclick="sendChatMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAMMAR MODULE -->
+    <div class="learning-section" id="grammarModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>📖 Gramática com IA</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div class="score-bar">
+                <span>🎯 Pontuação: <strong><span id="correctCount">0</span> / <span
+                            id="totalCount">0</span></strong></span>
+                <span id="accuracyDisplay">Precisão: 0%</span>
+            </div>
+            <div class="grammar-card">
+                <p class="question-context" id="questionContext"></p>
+                <p class="question-text" id="questionText"></p>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="grammarFeedback">
+                    <p id="feedbackText"></p>
+                </div>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextGrammarQuestion()"
+                    style="display: none; margin-top: 20px;">Próxima Questão →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VOCAB MODULE -->
+    <!-- VOCAB MODULE (Enhanced) -->
+    <div class="learning-section" id="vocabModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>📚 Vocabulário Infinito</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <!-- Category Filters -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                <button class="btn btn-outline cat-btn active" data-cat="all" onclick="changeCategory('all')"
+                    style="font-size: 0.8rem;">📖 Todas (64)</button>
+                <button class="btn btn-outline cat-btn" data-cat="greetings" onclick="changeCategory('greetings')"
+                    style="font-size: 0.8rem;">🤝 Cumprimentos</button>
+                <button class="btn btn-outline cat-btn" data-cat="feelings" onclick="changeCategory('feelings')"
+                    style="font-size: 0.8rem;">😊 Sentimentos</button>
+                <button class="btn btn-outline cat-btn" data-cat="food" onclick="changeCategory('food')"
+                    style="font-size: 0.8rem;">🍕 Comida</button>
+                <button class="btn btn-outline cat-btn" data-cat="travel" onclick="changeCategory('travel')"
+                    style="font-size: 0.8rem;">✈️ Viagem</button>
+                <button class="btn btn-outline cat-btn" data-cat="work" onclick="changeCategory('work')"
+                    style="font-size: 0.8rem;">💼 Trabalho</button>
+                <button class="btn btn-outline cat-btn" data-cat="falseFriends" onclick="changeCategory('falseFriends')"
+                    style="font-size: 0.8rem;">⚠️ Falsos Cognatos</button>
+                <button class="btn btn-outline cat-btn" data-cat="phrasalVerbs" onclick="changeCategory('phrasalVerbs')"
+                    style="font-size: 0.8rem;">🔗 Phrasal Verbs</button>
+                <button class="btn btn-outline cat-btn" data-cat="numbers" onclick="changeCategory('numbers')"
+                    style="font-size: 0.8rem;">🔢 Números</button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <p id="learnedCount" style="color: var(--primary); font-size: 0.9rem;">✅ 0 palavras aprendidas</p>
+                <button id="flashcardModeBtn" class="btn btn-outline" onclick="toggleFlashcardMode()"
+                    style="font-size: 0.8rem;">🎴 Modo Flashcard: OFF</button>
+            </div>
+
+            <!-- Vocab Card -->
+            <div class="grammar-card" style="text-align: center;" onclick="revealAnswer()">
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 15px;" id="vocabCounter"></p>
+
+                <h2 id="vocabWord"
+                    style="font-size: 2.5rem; margin-bottom: 10px; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                </h2>
+                <p id="vocabPronunciation"
+                    style="color: rgba(255,255,255,0.5); margin-bottom: 20px; font-family: monospace;"></p>
+
+                <button class="btn btn-primary" onclick="event.stopPropagation(); speakVocab();"
+                    style="margin-bottom: 20px;">🔊 Ouvir</button>
+
+                <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">🇧🇷 Tradução</p>
+                    <p id="vocabTranslation"
+                        style="font-size: 1.4rem; margin-top: 10px; font-weight: 600; cursor: pointer;"></p>
+                </div>
+
+                <div style="margin-top: 15px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">🇺🇸 Example</p>
+                    <p id="vocabExample" style="font-size: 1.1rem; margin-top: 10px; font-style: italic;"></p>
+                </div>
+
+                <div id="vocabTip"
+                    style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(139, 92, 246, 0.2)); border-radius: 15px; border: 1px solid rgba(20, 184, 166, 0.3);">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-outline" onclick="prevVocab()">← Anterior</button>
+                <button id="learnedBtn" class="btn btn-outline" onclick="toggleLearned()">📚 Marcar como
+                    Aprendida</button>
+                <button class="btn btn-outline" onclick="shuffleVocab()">🔀 Aleatória</button>
+                <button class="btn btn-primary" onclick="nextVocab()">Próxima →</button>
+            </div>
+
+            <!-- Filter by Learning Status -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-outline cat-btn" data-cat="learned" onclick="changeCategory('learned')"
+                    style="font-size: 0.8rem;">✅ Ver Aprendidas</button>
+                <button class="btn btn-outline cat-btn" data-cat="tolearn" onclick="changeCategory('tolearn')"
+                    style="font-size: 0.8rem;">📖 Ver Não Aprendidas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTENING MODULE -->
+    <div class="learning-section" id="listeningModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>🎧 Listening</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div class="grammar-card" style="text-align: center;">
+                <p style="color: var(--primary); margin-bottom: 30px;">Ouça e escreva o que você ouviu:</p>
+                <button class="btn btn-primary" onclick="playListening()"
+                    style="font-size: 1.5rem; padding: 20px 40px;">🔊 Ouvir</button>
+                <input type="text" class="chat-input" id="listeningInput" placeholder="Type what you heard..."
+                    style="margin-top: 30px; text-align: center;">
+                <button class="btn btn-outline" onclick="checkListening()" style="margin-top: 20px;">Verificar</button>
+                <div class="feedback" id="listeningFeedback">
+                    <p id="listeningFeedbackText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUIZ MODULE -->
+    <div class="learning-section" id="quizModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>🎯 Infinite Quiz</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div class="score-bar">
+                <span>🎯 Score: <strong><span id="quizCorrect">0</span> / <span id="quizTotal">0</span></strong></span>
+                <span id="quizCategory"></span>
+            </div>
+            <div class="grammar-card">
+                <p class="question-context" id="quizContext"></p>
+                <p class="question-text" id="quizQuestion"></p>
+                <div class="options" id="quizOptions"></div>
+                <div class="feedback" id="quizFeedback">
+                    <p id="quizFeedbackText"></p>
+                </div>
+                <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuizQuestion()"
+                    style="display: none; margin-top: 20px;">Next Question →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TUTORIALS MODULE -->
+    <div class="learning-section" id="tutorialsModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>📘 Grammar Tutorials</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div id="tutorialsList" style="display: grid; gap: 15px;"></div>
+            <div id="tutorialContent" class="grammar-card" style="display: none;">
+                <button class="btn btn-outline" onclick="showTutorialsList()" style="margin-bottom: 20px;">← Back to
+                    Topics</button>
+                <h2 id="tutorialTitle" style="margin-bottom: 20px;"></h2>
+                <div id="tutorialText" style="line-height: 1.8;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORD GAME MODULE -->
+    <div class="learning-section" id="wordgameModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>🎮 Jogo de Palavras</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <!-- Score Display -->
+            <div style="display: flex; justify-content: space-around; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div
+                    style="text-align: center; padding: 15px 25px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">🏆 Pontos</p>
+                    <p id="gameScore" style="font-size: 2rem; font-weight: 800; color: var(--accent);">0</p>
+                </div>
+                <div
+                    style="text-align: center; padding: 15px 25px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">🔥 Sequência</p>
+                    <p id="gameStreak" style="font-size: 2rem; font-weight: 800; color: var(--primary);">0</p>
+                </div>
+                <div
+                    style="text-align: center; padding: 15px 25px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">⏱️ Tempo</p>
+                    <p id="gameTimer" style="font-size: 2rem; font-weight: 800; color: var(--secondary);">30</p>
+                </div>
+            </div>
+
+            <!-- Game Card -->
+            <div class="grammar-card" style="text-align: center;">
+                <p id="gameHint" style="color: rgba(255,255,255,0.5); margin-bottom: 15px;">🇧🇷 Qual é a tradução em
+                    inglês?</p>
+                <h2 id="gameWord"
+                    style="font-size: 2.5rem; margin-bottom: 30px; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                </h2>
+
+                <div id="gameOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+
+                <div id="gameFeedback" class="feedback" style="margin-top: 20px;">
+                    <p id="gameFeedbackText"></p>
+                </div>
+            </div>
+
+            <!-- Start/Restart Button -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="gameStartBtn" class="btn btn-primary" onclick="startWordGame()"
+                    style="font-size: 1.2rem; padding: 15px 40px;">🎮 Iniciar Jogo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRONUNCIATION MODULE -->
+    <div class="learning-section" id="pronunciationModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>🗣️ Prática de Pronúncia</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <div class="grammar-card" style="text-align: center;">
+                <p style="color: rgba(255,255,255,0.5); margin-bottom: 10px;">Ouça e repita:</p>
+
+                <h2 id="pronWord" style="font-size: 2.5rem; margin-bottom: 5px;"></h2>
+                <p id="pronPhonetic" style="color: var(--primary); font-family: monospace; margin-bottom: 20px;"></p>
+
+                <button class="btn btn-primary" onclick="playPronunciation()" style="margin-bottom: 30px;">🔊 Ouvir
+                    Pronúncia Correta</button>
+
+                <div
+                    style="padding: 25px; background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 20px;">
+                    <p style="margin-bottom: 15px;">Agora é sua vez! Clique e fale:</p>
+                    <button id="pronRecordBtn" class="btn btn-outline" onclick="recordPronunciation()"
+                        style="font-size: 1.5rem; padding: 20px 40px;">🎤 Gravar</button>
+                </div>
+
+                <div id="pronResult" style="display: none; padding: 20px; border-radius: 15px; margin-top: 20px;">
+                    <p style="color: rgba(255,255,255,0.5); margin-bottom: 10px;">Você disse:</p>
+                    <p id="pronUserSaid" style="font-size: 1.5rem; font-weight: 600;"></p>
+                    <div id="pronFeedback" style="margin-top: 15px; font-size: 1.2rem;"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-outline" onclick="prevPronWord()">← Anterior</button>
+                <button class="btn btn-primary" onclick="nextPronWord()">Próxima →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRESS DASHBOARD MODULE -->
+    <div class="learning-section" id="progressModule">
+        <div class="learning-header">
+            <button class="btn btn-outline" onclick="backToDashboard()">← Voltar</button>
+            <h2>📊 Meu Progresso</h2>
+            <div></div>
+        </div>
+        <div class="learning-content">
+            <!-- Stats Cards -->
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                <div
+                    style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(20, 184, 166, 0.1)); border-radius: 15px; border: 1px solid rgba(20, 184, 166, 0.3);">
+                    <p style="font-size: 2.5rem;" id="progWords">0</p>
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Palavras Aprendidas</p>
+                </div>
+                <div
+                    style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1)); border-radius: 15px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <p style="font-size: 2.5rem;" id="progQuestions">0</p>
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Questões Respondidas</p>
+                </div>
+                <div
+                    style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.1)); border-radius: 15px; border: 1px solid rgba(251, 146, 60, 0.3);">
+                    <p style="font-size: 2.5rem;" id="progAccuracy">0%</p>
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Precisão</p>
+                </div>
+                <div
+                    style="text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(236, 72, 153, 0.1)); border-radius: 15px; border: 1px solid rgba(236, 72, 153, 0.3);">
+                    <p style="font-size: 2.5rem;" id="progStreak">0</p>
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Dias Seguidos</p>
+                </div>
+            </div>
+
+            <!-- Progress Bars -->
+            <div class="grammar-card">
+                <h3 style="margin-bottom: 25px;">📈 Progresso por Categoria</h3>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>📚 Vocabulário</span>
+                        <span id="progVocabPct">0%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                        <div id="progVocabBar"
+                            style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.5s;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>📖 Gramática</span>
+                        <span id="progGrammarPct">0%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                        <div id="progGrammarBar"
+                            style="height: 100%; background: linear-gradient(90deg, var(--secondary), var(--accent)); width: 0%; transition: width 0.5s;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>🎧 Listening</span>
+                        <span id="progListenPct">0%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                        <div id="progListenBar"
+                            style="height: 100%; background: linear-gradient(90deg, var(--accent), var(--primary)); width: 0%; transition: width 0.5s;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="grammar-card" style="margin-top: 20px;">
+                <h3 style="margin-bottom: 20px;">🏆 Conquistas</h3>
+                <div id="achievementsList"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; text-align: center;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== STATE =====
+        let currentUser = null;
+        let userStats = {
+            streak: 0,
+            wordsLearned: 0,
+            questionsCorrect: 0,
+            questionsTotal: 0,
+            studyMinutes: 0
+        };
+
+        // ===== AUTH =====
+        function showModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function hideModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function switchModal(from, to) {
+            hideModal(from);
+            showModal(to);
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        function signup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            // Simulate signup
+            currentUser = { name, email, plan: 'free' };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+
+            hideModal('signupModal');
+            showDashboard();
+        }
+
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+
+            // Simulate login
+            currentUser = { name: email.split('@')[0], email, plan: 'free' };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+
+            hideModal('loginModal');
+            showDashboard();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('user');
+            showLanding();
+        }
+
+        function showDashboard() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('navLinks').classList.add('hidden');
+            document.getElementById('userNav').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            updateStats();
+            updateDailyTip();
+        }
+
+        function showLanding() {
+            document.getElementById('landingPage').classList.remove('hidden');
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('navLinks').classList.remove('hidden');
+            document.getElementById('userNav').classList.add('hidden');
+            hideAllModules();
+        }
+
+        function updateStats() {
+            document.getElementById('streakDays').textContent = userStats.streak + ' dias';
+            document.getElementById('wordsLearned').textContent = userStats.wordsLearned;
+            document.getElementById('questionsCorrect').textContent = userStats.questionsCorrect;
+            document.getElementById('studyTime').textContent = userStats.studyMinutes + 'min';
+        }
+
+        // ===== ENCOURAGING MESSAGES =====
+        const encouragingMessages = [
+            "🌟 Você está indo muito bem!",
+            "💪 Continue assim, você está evoluindo!",
+            "🎉 Excelente progresso!",
+            "🚀 Você é incrível! Keep going!",
+            "⭐ Cada palavra conta!",
+            "🏆 Você está no caminho certo!",
+            "✨ Amazing! Você está brilhando!",
+            "🔥 On fire! Continue praticando!",
+            "💎 Você é dedicado(a)!",
+            "🌈 O inglês está ficando fácil!"
+        ];
+
+        function showEncouragement() {
+            const msg = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+            const toast = document.createElement('div');
+            toast.className = 'encouragement';
+            toast.textContent = msg;
+            toast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Show encouragement randomly
+        setInterval(() => {
+            if (document.querySelector('.learning-section.active') && Math.random() > 0.7) {
+                showEncouragement();
+            }
+        }, 60000); // Every minute while studying
+
+        // ===== DAILY TIPS =====
+        const dailyTips = [
+            "Pratique um pouco todos os dias - a consistência é a chave para fluência!",
+            "Tente pensar em inglês durante o dia, mesmo que seja só uma frase.",
+            "Assista séries em inglês com legendas em inglês - ajuda muito!",
+            "Não tenha medo de errar - erros são oportunidades de aprender!",
+            "Fale sozinho(a) em inglês - é uma ótima forma de praticar!",
+            "Anote as palavras novas que você aprender hoje.",
+            "Ouça músicas em inglês e tente entender a letra.",
+            "Pratique a pronúncia em voz alta - não tenha vergonha!",
+            "Revise as palavras que você aprendeu ontem.",
+            "Defina uma meta: aprenda 5 palavras novas hoje!"
+        ];
+
+        function updateDailyTip() {
+            const tip = document.getElementById('dailyTip');
+            if (tip) {
+                const dayIndex = new Date().getDate() % dailyTips.length;
+                tip.textContent = dailyTips[dayIndex];
+            }
+        }
+
+        // ===== MODULES =====
+        function openModule(module) {
+            document.getElementById('dashboard').classList.remove('active');
+            hideAllModules();
+            document.getElementById(module + 'Module').classList.add('active');
+
+            if (module === 'chat') initChat();
+            if (module === 'grammar') loadGrammarQuestion();
+            if (module === 'vocab') loadVocab();
+            if (module === 'listening') initListening();
+            if (module === 'quiz') loadQuizQuestion();
+            if (module === 'tutorials') loadTutorials();
+            if (module === 'wordgame') { document.getElementById('gameWord').textContent = 'Clique para jogar!'; }
+            if (module === 'pronunciation') loadPronWord();
+            if (module === 'progress') loadProgressDashboard();
+        }
+
+        function backToDashboard() {
+            hideAllModules();
+            document.getElementById('dashboard').classList.add('active');
+        }
+
+        function hideAllModules() {
+            document.querySelectorAll('.learning-section').forEach(s => s.classList.remove('active'));
+        }
+
+        // ===== SMART AI CHAT =====
+        const aiResponses = {
+            greetings: {
+                patterns: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'oi', 'olá'],
+                responses: [
+                    "Hello! 👋 Great to hear from you! How are you feeling today? Try to answer in English!",
+                    "Hi there, friend! 😊 I'm Max, your English teacher. Let's practice together! What would you like to talk about?",
+                    "Hey! Welcome back! 🎉 Ready to improve your English? Tell me something about your day!"
+                ]
+            },
+            howAreYou: {
+                patterns: ['how are you', 'how do you do', 'whats up', "what's up", 'how r u'],
+                responses: [
+                    "I'm doing great, thank you for asking! 😊 And you? Remember: 'I'm fine' or 'I'm doing well' are both correct answers!",
+                    "I'm wonderful! Thanks for asking! 💚 Pro tip: You can also say 'I'm doing great' or 'I'm fantastic!'"
+                ]
+            },
+            feelings: {
+                patterns: ['i am fine', "i'm fine", 'i am good', "i'm good", 'fine', 'good', 'great', 'wonderful', 'amazing'],
+                responses: [
+                    "That's wonderful to hear! 🌟 Now, let's practice! Can you tell me what you did yesterday? Use the PAST TENSE!",
+                    "Excellent! 😄 Since you're feeling good, let's learn something new! What topic interests you? (hobbies, travel, food, work...)"
+                ]
+            },
+            sad: {
+                patterns: ['sad', 'tired', 'bad', 'not good', 'not well', 'sick', 'bored'],
+                responses: [
+                    "I'm sorry to hear that 💙 Learning English can help distract you! Let's talk about something fun. What's your favorite hobby?",
+                    "Oh no! 🤗 I hope you feel better soon! Did you know? Studies show learning languages can improve your mood! Let's practice!"
+                ]
+            },
+            thanks: {
+                patterns: ['thank', 'thanks', 'thx', 'obrigado', 'obrigada'],
+                responses: [
+                    "You're welcome! 😊 In English, you can also say: 'Thanks a lot!', 'Thank you so much!', or 'I really appreciate it!'",
+                    "No problem! 💚 Fun fact: 'Thanks' is informal, 'Thank you' is more formal, and 'Cheers' is British slang for thanks!"
+                ]
+            },
+            help: {
+                patterns: ['help', 'i need help', 'can you help', 'ajuda', 'me ajuda'],
+                responses: [
+                    "Of course I can help! 🤝 Here's what we can practice:\n\n📖 GRAMMAR - Ask me about verb tenses, articles, prepositions\n💬 CONVERSATION - Let's talk about any topic\n📝 VOCABULARY - Ask me 'How do I say... in English?'\n\nWhat would you like to learn?",
+                ]
+            },
+            vocabulary: {
+                patterns: ['how do i say', 'how to say', 'what is', 'como fala', 'como diz', 'o que significa'],
+                responses: [
+                    "Great question! 📚 I'll help you with that. Could you be more specific about what word or phrase you want to learn?",
+                ]
+            },
+            grammar: {
+                patterns: ['grammar', 'verb', 'tense', 'present', 'past', 'future', 'gramática'],
+                responses: [
+                    "Let's talk about grammar! 📖\n\n🔹 PRESENT: I eat / I am eating\n🔹 PAST: I ate / I was eating\n🔹 FUTURE: I will eat / I am going to eat\n\nWhich tense would you like to practice? Try making a sentence!",
+                ]
+            }
+        };
+
+        // Grammar correction patterns
+        const grammarCorrections = [
+            { wrong: /\bi am have\b/gi, correct: 'I have', explanation: "We don't use 'am' before 'have'. Just say 'I have'." },
+            { wrong: /\bhe have\b/gi, correct: 'he has', explanation: "With he/she/it, use 'HAS' not 'have'. Example: He has a car." },
+            { wrong: /\bshe have\b/gi, correct: 'she has', explanation: "With he/she/it, use 'HAS' not 'have'. Example: She has a dog." },
+            { wrong: /\bi goed\b/gi, correct: 'I went', explanation: "'Go' is irregular! The past is 'WENT', not 'goed'." },
+            { wrong: /\bi eated\b/gi, correct: 'I ate', explanation: "'Eat' is irregular! The past is 'ATE', not 'eated'." },
+            { wrong: /\byesterday i go\b/gi, correct: 'Yesterday I went', explanation: "With 'yesterday', use PAST tense: 'went', not 'go'." },
+            { wrong: /\bi am agree\b/gi, correct: 'I agree', explanation: "'Agree' doesn't need 'am'. Just say 'I agree'." },
+            { wrong: /\bmore better\b/gi, correct: 'better', explanation: "'Better' already means 'more good'. Don't use 'more better'." },
+            { wrong: /\bmore faster\b/gi, correct: 'faster', explanation: "'Faster' already includes 'more'. Just use 'faster'." },
+            { wrong: /\bhe don't\b/gi, correct: "he doesn't", explanation: "With he/she/it, use 'DOESN'T' not 'don't'." },
+            { wrong: /\bshe don't\b/gi, correct: "she doesn't", explanation: "With he/she/it, use 'DOESN'T' not 'don't'." },
+        ];
+
+        function getAIResponse(userMessage) {
+            const msg = userMessage.toLowerCase().trim();
+            let response = '';
+            let correction = '';
+
+            // Check for grammar errors first
+            for (const rule of grammarCorrections) {
+                if (rule.wrong.test(userMessage)) {
+                    correction = `\n\n📝 **Quick tip:** ${rule.explanation}`;
+                    break;
+                }
+            }
+
+            // Find matching response category
+            for (const [category, data] of Object.entries(aiResponses)) {
+                if (data.patterns.some(p => msg.includes(p))) {
+                    response = data.responses[Math.floor(Math.random() * data.responses.length)];
+                    break;
+                }
+            }
+
+            // Default responses for unrecognized input
+            if (!response) {
+                const defaults = [
+                    `Interesting! 🤔 You said: "${userMessage}"\n\nLet me give you some vocabulary:\n• "Interesting" = Interessante\n• "Amazing" = Incrível\n• "Great" = Ótimo\n\nTry using one of these words in a sentence!`,
+                    `Good effort! 💪 Keep practicing!\n\n💡 TIP: Try asking me:\n• "How do I say [word] in English?"\n• "What does [word] mean?"\n• "Help me with grammar"`,
+                    `That's great practice! 📚\n\nHere's a challenge: Can you describe what you see around you right now? Use sentences like:\n• "I can see a..."\n• "There is a..."\n• "I have a..."`,
+                ];
+                response = defaults[Math.floor(Math.random() * defaults.length)];
+            }
+
+            return response + correction;
+        }
+
+        function initChat() {
+            document.getElementById('chatMessages').innerHTML = '';
+            const starter = "Hello! 👋 I'm **Max**, your AI English teacher!\n\n🎯 Here's how I can help you:\n• Practice **conversation** in English\n• Correct your **grammar** mistakes\n• Teach you new **vocabulary**\n• Answer questions about English\n\n💬 Start by saying 'Hello' or ask me anything!";
+            setTimeout(() => addChatMessage(starter, 'max'), 500);
+            speakText("Hello! I'm Max, your AI English teacher! How can I help you today?");
+        }
+
+        function addChatMessage(text, sender) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            // Convert **text** to bold
+            div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addChatMessage(text, 'user');
+            input.value = '';
+
+            document.getElementById('maxAvatar').classList.add('speaking');
+
+            // Simulate AI thinking
+            setTimeout(() => {
+                const response = getAIResponse(text);
+                addChatMessage(response, 'max');
+                // Speak only the first sentence to avoid long speeches
+                const firstSentence = response.split(/[.!?\n]/)[0];
+                speakText(firstSentence);
+                document.getElementById('maxAvatar').classList.remove('speaking');
+            }, 800 + Math.random() * 700);
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                u.rate = 0.9;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        let isRecording = false;
+        function startVoice() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { alert('Use Chrome para reconhecimento de voz'); return; }
+
+            const btn = document.getElementById('voiceBtn');
+            if (isRecording) { isRecording = false; btn.classList.remove('recording'); btn.textContent = '🎤'; return; }
+
+            const recognition = new SR();
+            recognition.lang = 'en-US';
+            isRecording = true;
+            btn.classList.add('recording');
+            btn.textContent = '🔴';
+            recognition.start();
+
+            recognition.onresult = (e) => {
+                document.getElementById('chatInput').value = e.results[0][0].transcript;
+                setTimeout(() => sendChatMessage(), 300);
+            };
+
+            recognition.onend = () => { isRecording = false; btn.classList.remove('recording'); btn.textContent = '🎤'; };
+        }
+
+        // ===== GRAMMAR =====
+        const grammarTemplates = {
+            presentSimple: {
+                context: "Present Simple",
+                generate: () => {
+                    const subjects = ["She", "He", "My brother", "The teacher"];
+                    const verbs = [
+                        { base: "work", third: "works" },
+                        { base: "go", third: "goes" },
+                        { base: "study", third: "studies" },
+                        { base: "play", third: "plays" }
+                    ];
+                    const s = subjects[Math.floor(Math.random() * subjects.length)];
+                    const v = verbs[Math.floor(Math.random() * verbs.length)];
+                    return {
+                        question: `${s} ___ every day.`,
+                        options: shuffle([v.third, v.base, v.base + "ing", "to " + v.base]),
+                        correct: v.third,
+                        explanation: "📚 PRESENT SIMPLE with he/she/it: Add -s or -es to the verb!\\n\\n✅ He works every day\\n✅ She goes to school\\n\\n(Em português: Com he/she/it, adicionamos -s/-es ao verbo)"
+                    };
+                }
+            },
+            pastSimple: {
+                context: "Past Simple",
+                generate: () => {
+                    const verbs = [
+                        { base: "watch", past: "watched" },
+                        { base: "go", past: "went" },
+                        { base: "see", past: "saw" },
+                        { base: "eat", past: "ate" }
+                    ];
+                    const v = verbs[Math.floor(Math.random() * verbs.length)];
+                    return {
+                        question: `Yesterday, I ___ a movie.`,
+                        options: shuffle([v.past, v.base, v.base + "s", "will " + v.base]),
+                        correct: v.past,
+                        explanation: "📚 PAST SIMPLE: Use for completed actions in the past!\\n\\n✅ I watched a movie (regular: add -ed)\\n✅ I went to school (irregular: 'go' → 'went')\\n\\n(Em português: Usamos past simple para ações já completas no passado)"
+                    };
+                }
+            },
+            future: {
+                context: "Future Simple",
+                generate: () => {
+                    const verbs = ["go", "study", "travel", "visit"];
+                    const v = verbs[Math.floor(Math.random() * verbs.length)];
+                    return {
+                        question: `We ___ to Paris next week.`,
+                        options: shuffle(["will " + v, v + "s", v + "ed", "is " + v + "ing"]),
+                        correct: "will " + v,
+                        explanation: "📚 FUTURE with WILL: Use 'will + verb' for future actions!\\n\\n✅ I will go tomorrow\\n✅ She will study next week\\n\\n(Em português: Usamos 'will + verbo' para falar do futuro)"
+                    };
+                }
+            }
+        };
+
+        function shuffle(arr) {
+            return arr.sort(() => Math.random() - 0.5);
+        }
+
+        let currentGrammarQ = null;
+
+        function loadGrammarQuestion() {
+            const types = Object.keys(grammarTemplates);
+            const type = types[Math.floor(Math.random() * types.length)];
+            const template = grammarTemplates[type];
+            const q = template.generate();
+            currentGrammarQ = { ...q, context: template.context };
+
+            document.getElementById('questionContext').textContent = "🤖 " + currentGrammarQ.context + " (Gerado por IA)";
+            document.getElementById('questionText').textContent = currentGrammarQ.question;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = currentGrammarQ.options.map((opt, i) =>
+                `<button class="option-btn" onclick="checkGrammarAnswer('${opt}')">${opt}</button>`
+            ).join('');
+
+            document.getElementById('grammarFeedback').className = 'feedback';
+            document.getElementById('nextBtn').style.display = 'none';
+
+            document.getElementById('correctCount').textContent = userStats.questionsCorrect;
+            document.getElementById('totalCount').textContent = userStats.questionsTotal;
+            updateAccuracy();
+        }
+
+        function checkGrammarAnswer(answer) {
+            userStats.questionsTotal++;
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === currentGrammarQ.correct) btn.classList.add('correct');
+                else if (btn.textContent === answer) btn.classList.add('wrong');
+            });
+
+            const feedback = document.getElementById('grammarFeedback');
+            const feedbackText = document.getElementById('feedbackText');
+
+            if (answer === currentGrammarQ.correct) {
+                userStats.questionsCorrect++;
+                feedback.className = 'feedback show correct';
+                feedbackText.innerHTML = '✅ <strong>Correct! Great job!</strong><br><br>' + currentGrammarQ.explanation.replace(/\\n/g, '<br>');
+            } else {
+                feedback.className = 'feedback show wrong';
+                feedbackText.innerHTML = '❌ <strong>Incorrect.</strong> The right answer was: <strong>' + currentGrammarQ.correct + '</strong><br><br>' + currentGrammarQ.explanation.replace(/\\n/g, '<br>');
+            }
+
+            document.getElementById('correctCount').textContent = userStats.questionsCorrect;
+            document.getElementById('totalCount').textContent = userStats.questionsTotal;
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            updateAccuracy();
+        }
+
+        function updateAccuracy() {
+            const acc = userStats.questionsTotal > 0 ? Math.round((userStats.questionsCorrect / userStats.questionsTotal) * 100) : 0;
+            document.getElementById('accuracyDisplay').textContent = 'Precisão: ' + acc + '%';
+        }
+
+        function nextGrammarQuestion() {
+            loadGrammarQuestion();
+        }
+
+        // ===== INFINITE VOCABULARY SYSTEM =====
+        const vocabCategories = {
+            greetings: {
+                name: "🤝 Cumprimentos",
+                words: [
+                    { word: "Hello", pronunciation: "/həˈloʊ/", translation: "Olá", example: "Hello! How are you?", tip: "💡 Formal greeting" },
+                    { word: "Hi", pronunciation: "/haɪ/", translation: "Oi", example: "Hi there!", tip: "💡 Informal greeting" },
+                    { word: "Good morning", pronunciation: "/ɡʊd ˈmɔːrnɪŋ/", translation: "Bom dia", example: "Good morning, everyone!", tip: "💡 Until 12pm" },
+                    { word: "Good afternoon", pronunciation: "/ɡʊd ˌæftərˈnuːn/", translation: "Boa tarde", example: "Good afternoon, sir.", tip: "💡 12pm to 6pm" },
+                    { word: "Good evening", pronunciation: "/ɡʊd ˈiːvnɪŋ/", translation: "Boa noite (chegada)", example: "Good evening!", tip: "💡 After 6pm - when arriving" },
+                    { word: "Goodbye", pronunciation: "/ɡʊdˈbaɪ/", translation: "Adeus/Tchau", example: "Goodbye, see you soon!", tip: "💡 More formal than 'bye'" },
+                    { word: "See you later", pronunciation: "/siː juː ˈleɪtər/", translation: "Até mais", example: "See you later!", tip: "💡 Casual farewell" },
+                    { word: "Nice to meet you", pronunciation: "/naɪs tuː miːt juː/", translation: "Prazer em conhecê-lo", example: "Nice to meet you!", tip: "💡 First meetings only" },
+                ]
+            },
+            feelings: {
+                name: "😊 Sentimentos",
+                words: [
+                    { word: "Happy", pronunciation: "/ˈhæpi/", translation: "Feliz", example: "I'm so happy today!", tip: "💡 General happiness" },
+                    { word: "Sad", pronunciation: "/sæd/", translation: "Triste", example: "She looks sad.", tip: "💡 Opposite of happy" },
+                    { word: "Angry", pronunciation: "/ˈæŋɡri/", translation: "Bravo/Com raiva", example: "Don't be angry.", tip: "💡 Stronger than 'upset'" },
+                    { word: "Tired", pronunciation: "/ˈtaɪərd/", translation: "Cansado", example: "I'm tired today.", tip: "💡 Physical or mental" },
+                    { word: "Excited", pronunciation: "/ɪkˈsaɪtɪd/", translation: "Empolgado", example: "I'm excited about the trip!", tip: "⚠️ NOT 'excitado' in Portuguese!" },
+                    { word: "Nervous", pronunciation: "/ˈnɜːrvəs/", translation: "Nervoso", example: "I'm nervous about the exam.", tip: "💡 Anxious feeling" },
+                    { word: "Bored", pronunciation: "/bɔːrd/", translation: "Entediado", example: "I'm bored.", tip: "⚠️ 'Boring' = thing, 'Bored' = you" },
+                    { word: "Worried", pronunciation: "/ˈwɜːrid/", translation: "Preocupado", example: "Don't be worried.", tip: "💡 Concern about something" },
+                ]
+            },
+            food: {
+                name: "🍕 Comida",
+                words: [
+                    { word: "Breakfast", pronunciation: "/ˈbrekfəst/", translation: "Café da manhã", example: "I had breakfast at 8am.", tip: "💡 First meal of the day" },
+                    { word: "Lunch", pronunciation: "/lʌntʃ/", translation: "Almoço", example: "Let's have lunch together.", tip: "💡 Midday meal" },
+                    { word: "Dinner", pronunciation: "/ˈdɪnər/", translation: "Jantar", example: "Dinner is ready!", tip: "💡 Evening meal" },
+                    { word: "Delicious", pronunciation: "/dɪˈlɪʃəs/", translation: "Delicioso", example: "This is delicious!", tip: "💡 Only for food/drinks" },
+                    { word: "Hungry", pronunciation: "/ˈhʌŋɡri/", translation: "Com fome", example: "I'm hungry.", tip: "💡 Want to eat" },
+                    { word: "Thirsty", pronunciation: "/ˈθɜːrsti/", translation: "Com sede", example: "I'm thirsty.", tip: "💡 Want to drink" },
+                    { word: "Recipe", pronunciation: "/ˈresəpi/", translation: "Receita", example: "This is my grandmother's recipe.", tip: "💡 Instructions to cook" },
+                    { word: "Ingredients", pronunciation: "/ɪnˈɡriːdiənts/", translation: "Ingredientes", example: "We need more ingredients.", tip: "💡 Things used to cook" },
+                ]
+            },
+            travel: {
+                name: "✈️ Viagem",
+                words: [
+                    { word: "Airport", pronunciation: "/ˈerpɔːrt/", translation: "Aeroporto", example: "We arrived at the airport.", tip: "💡 Where planes land" },
+                    { word: "Flight", pronunciation: "/flaɪt/", translation: "Voo", example: "My flight is delayed.", tip: "💡 Journey by plane" },
+                    { word: "Ticket", pronunciation: "/ˈtɪkɪt/", translation: "Passagem/Ingresso", example: "I need to buy a ticket.", tip: "💡 For transport or events" },
+                    { word: "Luggage", pronunciation: "/ˈlʌɡɪdʒ/", translation: "Bagagem", example: "Where is my luggage?", tip: "💡 Same as 'baggage'" },
+                    { word: "Passport", pronunciation: "/ˈpæspɔːrt/", translation: "Passaporte", example: "Don't forget your passport!", tip: "💡 Required for international travel" },
+                    { word: "Hotel", pronunciation: "/hoʊˈtel/", translation: "Hotel", example: "We're staying at a hotel.", tip: "💡 Accommodation" },
+                    { word: "Reservation", pronunciation: "/ˌrezərˈveɪʃn/", translation: "Reserva", example: "I have a reservation.", tip: "💡 Booking in advance" },
+                    { word: "Tourist", pronunciation: "/ˈtʊrɪst/", translation: "Turista", example: "I'm a tourist here.", tip: "💡 Person traveling for fun" },
+                ]
+            },
+            work: {
+                name: "💼 Trabalho",
+                words: [
+                    { word: "Office", pronunciation: "/ˈɒfɪs/", translation: "Escritório", example: "I work at an office.", tip: "💡 Place of work" },
+                    { word: "Meeting", pronunciation: "/ˈmiːtɪŋ/", translation: "Reunião", example: "I have a meeting at 3pm.", tip: "💡 Business discussion" },
+                    { word: "Boss", pronunciation: "/bɔːs/", translation: "Chefe", example: "My boss is nice.", tip: "💡 Person in charge" },
+                    { word: "Colleague", pronunciation: "/ˈkɒliːɡ/", translation: "Colega", example: "She's my colleague.", tip: "💡 Coworker" },
+                    { word: "Salary", pronunciation: "/ˈsæləri/", translation: "Salário", example: "I received my salary.", tip: "💡 Monthly payment" },
+                    { word: "Deadline", pronunciation: "/ˈdedlaɪn/", translation: "Prazo", example: "The deadline is Friday.", tip: "💡 Final date" },
+                    { word: "Interview", pronunciation: "/ˈɪntərvjuː/", translation: "Entrevista", example: "I have a job interview.", tip: "💡 For hiring" },
+                    { word: "Resume", pronunciation: "/ˈrezəmeɪ/", translation: "Currículo", example: "Send me your resume.", tip: "💡 CV in British English" },
+                ]
+            },
+            falseFriends: {
+                name: "⚠️ Falsos Cognatos",
+                words: [
+                    { word: "Actually", pronunciation: "/ˈæktʃuəli/", translation: "Na verdade", example: "Actually, I disagree.", tip: "⚠️ NOT 'atualmente' (=currently)" },
+                    { word: "Eventually", pronunciation: "/ɪˈventʃuəli/", translation: "Por fim/Finalmente", example: "I eventually found it.", tip: "⚠️ NOT 'eventualmente' (=occasionally)" },
+                    { word: "Pretend", pronunciation: "/prɪˈtend/", translation: "Fingir", example: "Don't pretend to be sick.", tip: "⚠️ NOT 'pretender' (=intend)" },
+                    { word: "Push", pronunciation: "/pʊʃ/", translation: "Empurrar", example: "Push the door.", tip: "⚠️ NOT 'puxar' (=pull)" },
+                    { word: "Pull", pronunciation: "/pʊl/", translation: "Puxar", example: "Pull the handle.", tip: "⚠️ Opposite of push!" },
+                    { word: "Library", pronunciation: "/ˈlaɪbrəri/", translation: "Biblioteca", example: "I study at the library.", tip: "⚠️ NOT 'livraria' (=bookstore)" },
+                    { word: "Fabric", pronunciation: "/ˈfæbrɪk/", translation: "Tecido", example: "This fabric is soft.", tip: "⚠️ NOT 'fábrica' (=factory)" },
+                    { word: "Sensible", pronunciation: "/ˈsensəbl/", translation: "Sensato", example: "Be sensible.", tip: "⚠️ NOT 'sensível' (=sensitive)" },
+                ]
+            },
+            phrasalVerbs: {
+                name: "🔗 Phrasal Verbs",
+                words: [
+                    { word: "Wake up", pronunciation: "/weɪk ʌp/", translation: "Acordar", example: "I wake up at 7am.", tip: "💡 Start being awake" },
+                    { word: "Get up", pronunciation: "/ɡet ʌp/", translation: "Levantar-se", example: "Get up! It's late!", tip: "💡 Leave the bed" },
+                    { word: "Give up", pronunciation: "/ɡɪv ʌp/", translation: "Desistir", example: "Never give up!", tip: "💡 Stop trying" },
+                    { word: "Look for", pronunciation: "/lʊk fɔːr/", translation: "Procurar", example: "I'm looking for my keys.", tip: "💡 Search for something" },
+                    { word: "Find out", pronunciation: "/faɪnd aʊt/", translation: "Descobrir", example: "I found out the truth.", tip: "💡 Discover information" },
+                    { word: "Turn on", pronunciation: "/tɜːrn ɒn/", translation: "Ligar", example: "Turn on the lights.", tip: "💡 Activate" },
+                    { word: "Turn off", pronunciation: "/tɜːrn ɒf/", translation: "Desligar", example: "Turn off the TV.", tip: "💡 Deactivate" },
+                    { word: "Put on", pronunciation: "/pʊt ɒn/", translation: "Vestir/Colocar", example: "Put on your jacket.", tip: "💡 Wear clothing" },
+                ]
+            },
+            numbers: {
+                name: "🔢 Números",
+                words: [
+                    { word: "Hundred", pronunciation: "/ˈhʌndrəd/", translation: "Cem", example: "One hundred people came.", tip: "💡 100" },
+                    { word: "Thousand", pronunciation: "/ˈθaʊznd/", translation: "Mil", example: "A thousand stars.", tip: "💡 1,000" },
+                    { word: "Million", pronunciation: "/ˈmɪljən/", translation: "Milhão", example: "A million dollars!", tip: "💡 1,000,000" },
+                    { word: "First", pronunciation: "/fɜːrst/", translation: "Primeiro", example: "I'm first in line.", tip: "💡 1st - ordinal" },
+                    { word: "Second", pronunciation: "/ˈsekənd/", translation: "Segundo", example: "Wait a second.", tip: "💡 2nd - also means time unit" },
+                    { word: "Third", pronunciation: "/θɜːrd/", translation: "Terceiro", example: "The third floor.", tip: "💡 3rd - ordinal" },
+                    { word: "Half", pronunciation: "/hæf/", translation: "Metade", example: "Half an hour.", tip: "💡 50% or 1/2" },
+                    { word: "Dozen", pronunciation: "/ˈdʌzn/", translation: "Dúzia", example: "A dozen eggs.", tip: "💡 12 items" },
+                ]
+            }
+        };
+
+        // Flatten all words into single array
+        let allVocabulary = [];
+        Object.keys(vocabCategories).forEach(cat => {
+            vocabCategories[cat].words.forEach(w => {
+                allVocabulary.push({ ...w, category: vocabCategories[cat].name });
+            });
+        });
+
+        // State
+        let vocabIndex = 0;
+        let currentCategory = 'all';
+        let learnedWords = JSON.parse(localStorage.getItem('learnedWords') || '[]');
+        let flashcardMode = false;
+        let showingAnswer = false;
+
+        function getFilteredVocab() {
+            if (currentCategory === 'all') return allVocabulary;
+            if (currentCategory === 'learned') return allVocabulary.filter(w => learnedWords.includes(w.word));
+            if (currentCategory === 'tolearn') return allVocabulary.filter(w => !learnedWords.includes(w.word));
+            return vocabCategories[currentCategory]?.words || allVocabulary;
+        }
+
+        function loadVocab() {
+            const vocab = getFilteredVocab();
+            if (vocab.length === 0) {
+                document.getElementById('vocabWord').textContent = 'Nenhuma palavra';
+                document.getElementById('vocabCounter').textContent = 'Selecione outra categoria';
+                return;
+            }
+
+            vocabIndex = vocabIndex % vocab.length;
+            const v = vocab[vocabIndex];
+            const isLearned = learnedWords.includes(v.word);
+
+            // Update counter
+            const counter = document.getElementById('vocabCounter');
+            if (counter) counter.textContent = `Palavra ${vocabIndex + 1} de ${vocab.length} | ${v.category || ''}`;
+
+            // Update learned count
+            const learnedCount = document.getElementById('learnedCount');
+            if (learnedCount) learnedCount.textContent = `✅ ${learnedWords.length} palavras aprendidas`;
+
+            document.getElementById('vocabWord').textContent = v.word;
+            document.getElementById('vocabPronunciation').textContent = v.pronunciation;
+
+            // Flashcard mode - hide answer initially
+            if (flashcardMode && !showingAnswer) {
+                document.getElementById('vocabTranslation').textContent = '🔒 Clique para revelar';
+                document.getElementById('vocabExample').textContent = '';
+                document.getElementById('vocabTip').style.display = 'none';
+            } else {
+                document.getElementById('vocabTranslation').textContent = v.translation;
+                document.getElementById('vocabExample').textContent = '📝 "' + v.example + '"';
+                const tipEl = document.getElementById('vocabTip');
+                if (tipEl && v.tip) {
+                    tipEl.textContent = v.tip;
+                    tipEl.style.display = 'block';
+                }
+            }
+
+            // Update learned button
+            const learnedBtn = document.getElementById('learnedBtn');
+            if (learnedBtn) {
+                learnedBtn.textContent = isLearned ? '✅ Aprendida!' : '📚 Marcar como Aprendida';
+                learnedBtn.className = isLearned ? 'btn btn-primary' : 'btn btn-outline';
+            }
+
+            showingAnswer = false;
+        }
+
+        function revealAnswer() {
+            showingAnswer = true;
+            loadVocab();
+        }
+
+        function toggleLearned() {
+            const vocab = getFilteredVocab();
+            const word = vocab[vocabIndex]?.word;
+            if (!word) return;
+
+            if (learnedWords.includes(word)) {
+                learnedWords = learnedWords.filter(w => w !== word);
+            } else {
+                learnedWords.push(word);
+                userStats.wordsLearned++;
+                updateStats();
+            }
+            localStorage.setItem('learnedWords', JSON.stringify(learnedWords));
+            loadVocab();
+        }
+
+        function changeCategory(cat) {
+            currentCategory = cat;
+            vocabIndex = 0;
+            loadVocab();
+
+            // Update active button
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-cat="${cat}"]`)?.classList.add('active');
+        }
+
+        function toggleFlashcardMode() {
+            flashcardMode = !flashcardMode;
+            const btn = document.getElementById('flashcardModeBtn');
+            if (btn) btn.textContent = flashcardMode ? '🎴 Modo Flashcard: ON' : '🎴 Modo Flashcard: OFF';
+            loadVocab();
+        }
+
+        function speakVocab() {
+            const vocab = getFilteredVocab();
+            const v = vocab[vocabIndex];
+            if (v) speakText(v.word + ". " + v.example);
+        }
+
+        function nextVocab() {
+            const vocab = getFilteredVocab();
+            vocabIndex = (vocabIndex + 1) % vocab.length;
+            showingAnswer = false;
+            loadVocab();
+        }
+
+        function prevVocab() {
+            const vocab = getFilteredVocab();
+            vocabIndex = vocabIndex === 0 ? vocab.length - 1 : vocabIndex - 1;
+            showingAnswer = false;
+            loadVocab();
+        }
+
+        function shuffleVocab() {
+            const vocab = getFilteredVocab();
+            vocabIndex = Math.floor(Math.random() * vocab.length);
+            showingAnswer = false;
+            loadVocab();
+        }
+
+        // ===== LISTENING =====
+        const listeningPhrases = [
+            "Hello, how are you?",
+            "Nice to meet you.",
+            "What time is it?",
+            "I love learning English.",
+            "See you tomorrow!",
+            "Thank you very much."
+        ];
+        let currentPhrase = "";
+
+        function initListening() {
+            currentPhrase = listeningPhrases[Math.floor(Math.random() * listeningPhrases.length)];
+            document.getElementById('listeningInput').value = '';
+            document.getElementById('listeningFeedback').className = 'feedback';
+        }
+
+        function playListening() {
+            speakText(currentPhrase);
+        }
+
+        function checkListening() {
+            const input = document.getElementById('listeningInput').value.trim().toLowerCase();
+            const correct = currentPhrase.toLowerCase().replace(/[?!.,]/g, '');
+
+            const feedback = document.getElementById('listeningFeedback');
+            const text = document.getElementById('listeningFeedbackText');
+
+            if (input === correct || input === currentPhrase.toLowerCase()) {
+                feedback.className = 'feedback show correct';
+                text.textContent = '✅ Perfeito! A frase era: "' + currentPhrase + '"';
+            } else {
+                feedback.className = 'feedback show wrong';
+                text.textContent = '❌ Quase! A frase era: "' + currentPhrase + '"';
+            }
+
+            setTimeout(initListening, 3000);
+        }
+
+        // ===== INFINITE QUIZ =====
+        let quizScore = { correct: 0, total: 0 };
+        let currentQuizQ = null;
+
+        const quizCategories = {
+            vocabulary: {
+                name: "Vocabulary",
+                generate: () => {
+                    const words = [
+                        { q: "What does 'ubiquitous' mean?", a: "Present everywhere", wrong: ["Very rare", "Beautiful", "Expensive"] },
+                        { q: "What is a synonym for 'happy'?", a: "Joyful", wrong: ["Sad", "Angry", "Tired"] },
+                        { q: "What does 'procrastinate' mean?", a: "To delay doing something", wrong: ["To work hard", "To celebrate", "To exercise"] },
+                        { q: "What is the opposite of 'generous'?", a: "Stingy", wrong: ["Kind", "Wealthy", "Happy"] },
+                        { q: "What does 'ephemeral' mean?", a: "Lasting a short time", wrong: ["Eternal", "Beautiful", "Expensive"] }
+                    ];
+                    return words[Math.floor(Math.random() * words.length)];
+                }
+            },
+            idioms: {
+                name: "Idioms & Expressions",
+                generate: () => {
+                    const idioms = [
+                        { q: "What does 'break a leg' mean?", a: "Good luck", wrong: ["Be careful", "Run fast", "Get injured"] },
+                        { q: "'It's raining cats and dogs' means:", a: "Heavy rain", wrong: ["Animals falling", "Chaos", "Pet store"] },
+                        { q: "What does 'piece of cake' mean?", a: "Something easy", wrong: ["Dessert", "Birthday party", "Expensive"] },
+                        { q: "'Hit the sack' means:", a: "Go to bed", wrong: ["Punch something", "Exercise", "Get angry"] },
+                        { q: "'Bite the bullet' means:", a: "Face a difficult situation", wrong: ["Eat metal", "Go to war", "Be brave"] }
+                    ];
+                    return idioms[Math.floor(Math.random() * idioms.length)];
+                }
+            },
+            grammar: {
+                name: "Grammar Rules",
+                generate: () => {
+                    const rules = [
+                        { q: "Which is correct: 'He don't' or 'He doesn't'?", a: "He doesn't", wrong: ["He don't", "Both are correct", "Neither"] },
+                        { q: "Complete: 'If I ___ rich, I would travel.'", a: "were", wrong: ["was", "am", "be"] },
+                        { q: "Which article: '___ university'?", a: "a", wrong: ["an", "the", "no article"] },
+                        { q: "'I have been studying ___ 3 hours.'", a: "for", wrong: ["since", "during", "while"] },
+                        { q: "Correct form: 'She ___ to the gym every day.'", a: "goes", wrong: ["go", "going", "went"] }
+                    ];
+                    return rules[Math.floor(Math.random() * rules.length)];
+                }
+            },
+            pronunciation: {
+                name: "Pronunciation",
+                generate: () => {
+                    const pron = [
+                        { q: "How many syllables in 'comfortable'?", a: "3 (comf-ter-ble)", wrong: ["4", "5", "2"] },
+                        { q: "The 'gh' in 'through' is:", a: "Silent", wrong: ["Pronounced as 'g'", "Pronounced as 'f'", "Pronounced as 'k'"] },
+                        { q: "Which word has a silent 'k'?", a: "Knife", wrong: ["Kite", "Kayak", "Kettle"] },
+                        { q: "'Read' (past) rhymes with:", a: "Red", wrong: ["Reed", "Ride", "Road"] },
+                        { q: "The stress in 'photograph' is on:", a: "First syllable", wrong: ["Second syllable", "Third syllable", "Last syllable"] }
+                    ];
+                    return pron[Math.floor(Math.random() * pron.length)];
+                }
+            }
+        };
+
+        function loadQuizQuestion() {
+            const cats = Object.keys(quizCategories);
+            const cat = cats[Math.floor(Math.random() * cats.length)];
+            const template = quizCategories[cat];
+            const q = template.generate();
+
+            const options = [q.a, ...q.wrong].sort(() => Math.random() - 0.5);
+            currentQuizQ = { ...q, options, correct: q.a, category: template.name };
+
+            document.getElementById('quizCategory').textContent = template.name;
+            document.getElementById('quizContext').textContent = "🤖 AI Generated Question";
+            document.getElementById('quizQuestion').textContent = currentQuizQ.q;
+
+            document.getElementById('quizOptions').innerHTML = currentQuizQ.options.map((opt, i) =>
+                `<button class="option-btn" onclick="checkQuizAnswer('${opt.replace(/'/g, "\\'")}')">${opt}</button>`
+            ).join('');
+
+            document.getElementById('quizFeedback').className = 'feedback';
+            document.getElementById('quizNextBtn').style.display = 'none';
+            document.getElementById('quizCorrect').textContent = quizScore.correct;
+            document.getElementById('quizTotal').textContent = quizScore.total;
+        }
+
+        function checkQuizAnswer(answer) {
+            quizScore.total++;
+            const buttons = document.querySelectorAll('#quizOptions .option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === currentQuizQ.correct) btn.classList.add('correct');
+                else if (btn.textContent === answer) btn.classList.add('wrong');
+            });
+
+            const feedback = document.getElementById('quizFeedback');
+            const text = document.getElementById('quizFeedbackText');
+
+            if (answer === currentQuizQ.correct) {
+                quizScore.correct++;
+                feedback.className = 'feedback show correct';
+                text.textContent = '✅ Correct! Well done!';
+            } else {
+                feedback.className = 'feedback show wrong';
+                text.innerHTML = '❌ Wrong. The answer was: <strong>' + currentQuizQ.correct + '</strong>';
+            }
+
+            document.getElementById('quizCorrect').textContent = quizScore.correct;
+            document.getElementById('quizTotal').textContent = quizScore.total;
+            document.getElementById('quizNextBtn').style.display = 'inline-block';
+        }
+
+        function nextQuizQuestion() { loadQuizQuestion(); }
+
+        // ===== GRAMMAR TUTORIALS =====
+        const grammarTutorials = [
+            {
+                title: "Present Simple",
+                content: `<h3>📖 When to use</h3>
+                <p>Use Present Simple for habits, routines, facts, and things that are always true.</p>
+                <h3>📝 Structure</h3>
+                <p><strong>Affirmative:</strong> Subject + Verb (add -s/-es for he/she/it)</p>
+                <p><strong>Negative:</strong> Subject + don't/doesn't + Verb</p>
+                <p><strong>Question:</strong> Do/Does + Subject + Verb?</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li>I <strong>work</strong> every day.</li>
+                    <li>She <strong>goes</strong> to school at 8 AM.</li>
+                    <li>Water <strong>boils</strong> at 100°C.</li>
+                </ul>
+                <h3>⚠️ Common Mistakes</h3>
+                <p>❌ He go to work. → ✅ He <strong>goes</strong> to work.</p>`
+            },
+            {
+                title: "Present Continuous",
+                content: `<h3>📖 When to use</h3>
+                <p>Use Present Continuous for actions happening now or temporary situations.</p>
+                <h3>📝 Structure</h3>
+                <p><strong>Affirmative:</strong> Subject + am/is/are + Verb-ing</p>
+                <p><strong>Negative:</strong> Subject + am not/isn't/aren't + Verb-ing</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li>I <strong>am studying</strong> English right now.</li>
+                    <li>She <strong>is working</strong> from home today.</li>
+                    <li>They <strong>are traveling</strong> to Paris this week.</li>
+                </ul>
+                <h3>⚠️ Don't use with stative verbs</h3>
+                <p>❌ I am knowing → ✅ I <strong>know</strong></p>`
+            },
+            {
+                title: "Past Simple",
+                content: `<h3>📖 When to use</h3>
+                <p>Use Past Simple for completed actions in the past.</p>
+                <h3>📝 Structure</h3>
+                <p><strong>Regular verbs:</strong> Add -ed (worked, played)</p>
+                <p><strong>Irregular verbs:</strong> Memorize! (went, saw, ate)</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li>I <strong>visited</strong> London last year.</li>
+                    <li>She <strong>went</strong> to the party yesterday.</li>
+                    <li>They <strong>didn't see</strong> the movie.</li>
+                </ul>
+                <h3>🔑 Time expressions</h3>
+                <p>yesterday, last week, in 2020, ago, when I was young</p>`
+            },
+            {
+                title: "Future with Will",
+                content: `<h3>📖 When to use</h3>
+                <p>Use Will for predictions, spontaneous decisions, promises, and offers.</p>
+                <h3>📝 Structure</h3>
+                <p><strong>Affirmative:</strong> Subject + will + Verb</p>
+                <p><strong>Negative:</strong> Subject + won't + Verb</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li>I think it <strong>will rain</strong> tomorrow.</li>
+                    <li>I <strong>will help</strong> you with that.</li>
+                    <li>She <strong>won't come</strong> to the party.</li>
+                </ul>`
+            },
+            {
+                title: "Modal Verbs",
+                content: `<h3>📖 What are Modal Verbs?</h3>
+                <p>Can, could, may, might, must, should, would, will - they express ability, possibility, permission, or obligation.</p>
+                <h3>📝 Rules</h3>
+                <p>1. Always followed by base verb (no 'to')</p>
+                <p>2. Don't change with he/she/it</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li><strong>Can</strong> - ability: I <strong>can</strong> swim.</li>
+                    <li><strong>Must</strong> - obligation: You <strong>must</strong> stop.</li>
+                    <li><strong>Should</strong> - advice: You <strong>should</strong> rest.</li>
+                </ul>`
+            },
+            {
+                title: "Conditionals",
+                content: `<h3>📖 Types of Conditionals</h3>
+                <p><strong>Zero:</strong> Facts → If + present, present</p>
+                <p><strong>First:</strong> Real possibility → If + present, will + verb</p>
+                <p><strong>Second:</strong> Hypothetical → If + past, would + verb</p>
+                <h3>✅ Examples</h3>
+                <ul>
+                    <li>Zero: If you heat water, it boils.</li>
+                    <li>First: If it rains, I <strong>will stay</strong> home.</li>
+                    <li>Second: If I <strong>were</strong> rich, I <strong>would travel</strong>.</li>
+                </ul>`
+            }
+        ];
+
+        function loadTutorials() {
+            document.getElementById('tutorialsList').style.display = 'grid';
+            document.getElementById('tutorialContent').style.display = 'none';
+
+            document.getElementById('tutorialsList').innerHTML = grammarTutorials.map((t, i) =>
+                `<div class="module-card" onclick="showTutorial(${i})">
+                    <h3>${t.title}</h3>
+                    <p style="color: rgba(255,255,255,0.6);">Click to learn</p>
+                </div>`
+            ).join('');
+        }
+
+        function showTutorial(index) {
+            const t = grammarTutorials[index];
+            document.getElementById('tutorialsList').style.display = 'none';
+            document.getElementById('tutorialContent').style.display = 'block';
+            document.getElementById('tutorialTitle').textContent = t.title;
+            document.getElementById('tutorialText').innerHTML = t.content;
+        }
+
+        function showTutorialsList() {
+            loadTutorials();
+        }
+
+        // ===== WORD GAME =====
+        let gameScore = 0;
+        let gameStreak = 0;
+        let gameTimer = 30;
+        let gameInterval = null;
+        let gameActive = false;
+        let highScore = parseInt(localStorage.getItem('highScore') || '0');
+
+        function startWordGame() {
+            gameScore = 0;
+            gameStreak = 0;
+            gameTimer = 30;
+            gameActive = true;
+
+            document.getElementById('gameScore').textContent = gameScore;
+            document.getElementById('gameStreak').textContent = gameStreak;
+            document.getElementById('gameTimer').textContent = gameTimer;
+            document.getElementById('gameStartBtn').textContent = '🔄 Reiniciar';
+            document.getElementById('gameFeedback').className = 'feedback';
+
+            // Start timer
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                gameTimer--;
+                document.getElementById('gameTimer').textContent = gameTimer;
+
+                if (gameTimer <= 0) {
+                    endWordGame();
+                }
+            }, 1000);
+
+            loadGameWord();
+        }
+
+        function loadGameWord() {
+            if (!gameActive) return;
+
+            const vocab = allVocabulary;
+            const correct = vocab[Math.floor(Math.random() * vocab.length)];
+
+            // Get 3 wrong answers
+            let options = [correct.word];
+            while (options.length < 4) {
+                const wrong = vocab[Math.floor(Math.random() * vocab.length)];
+                if (!options.includes(wrong.word)) {
+                    options.push(wrong.word);
+                }
+            }
+
+            // Shuffle options
+            options = options.sort(() => Math.random() - 0.5);
+
+            document.getElementById('gameWord').textContent = correct.translation;
+            document.getElementById('gameOptions').innerHTML = options.map(opt =>
+                `<button class="btn btn-outline" onclick="checkGameAnswer('${opt}', '${correct.word}')" style="padding: 15px; font-size: 1rem;">${opt}</button>`
+            ).join('');
+        }
+
+        function checkGameAnswer(selected, correct) {
+            if (!gameActive) return;
+
+            const buttons = document.querySelectorAll('#gameOptions button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) btn.classList.add('correct');
+                else if (btn.textContent === selected && selected !== correct) btn.classList.add('wrong');
+            });
+
+            const feedback = document.getElementById('gameFeedback');
+            const text = document.getElementById('gameFeedbackText');
+
+            if (selected === correct) {
+                gameStreak++;
+                const points = 10 + (gameStreak * 2); // Bonus for streak
+                gameScore += points;
+                gameTimer = Math.min(gameTimer + 3, 30); // Bonus time
+
+                feedback.className = 'feedback show correct';
+                text.textContent = `✅ +${points} pontos! 🔥 Sequência: ${gameStreak}`;
+            } else {
+                gameStreak = 0;
+                feedback.className = 'feedback show wrong';
+                text.textContent = `❌ A resposta era: ${correct}`;
+            }
+
+            document.getElementById('gameScore').textContent = gameScore;
+            document.getElementById('gameStreak').textContent = gameStreak;
+            document.getElementById('gameTimer').textContent = gameTimer;
+
+            setTimeout(() => {
+                feedback.className = 'feedback';
+                loadGameWord();
+            }, 1200);
+        }
+
+        function endWordGame() {
+            gameActive = false;
+            clearInterval(gameInterval);
+
+            // Check high score
+            const isNewRecord = gameScore > highScore;
+            if (isNewRecord) {
+                highScore = gameScore;
+                localStorage.setItem('highScore', highScore.toString());
+            }
+
+            // Celebratory messages based on score
+            let message = '';
+            let emoji = '';
+            if (gameScore >= 100) { message = 'INCRÍVEL! Você é um mestre!'; emoji = '🏆👑'; }
+            else if (gameScore >= 50) { message = 'Excelente! Muito bem!'; emoji = '🌟⭐'; }
+            else if (gameScore >= 20) { message = 'Bom trabalho! Continue praticando!'; emoji = '💪🎯'; }
+            else { message = 'Boa tentativa! Você consegue!'; emoji = '🚀💪'; }
+
+            document.getElementById('gameWord').textContent = emoji;
+            document.getElementById('gameOptions').innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; animation: fadeInUp 0.5s ease;">
+                    <p style="font-size: 1.3rem; margin-bottom: 15px; color: var(--primary);">${message}</p>
+                    <p style="font-size: 2rem; margin-bottom: 10px;">Pontuação: <strong style="color: var(--accent);">${gameScore}</strong></p>
+                    ${isNewRecord ? '<p style="color: var(--success); font-weight: 600; margin-bottom: 10px;">🎉 NOVO RECORDE! 🎉</p>' : ''}
+                    <p style="color: rgba(255,255,255,0.6);">Seu melhor: ${highScore} pontos</p>
+                </div>
+            `;
+            document.getElementById('gameStartBtn').textContent = '🎮 Jogar Novamente';
+
+            // Show celebration toast
+            if (gameScore >= 20) showEncouragement();
+        }
+
+        // ===== PRONUNCIATION =====
+        const pronWords = [
+            { word: "Hello", phonetic: "/həˈloʊ/" },
+            { word: "Thank you", phonetic: "/θæŋk juː/" },
+            { word: "Beautiful", phonetic: "/ˈbjuːtɪfl/" },
+            { word: "World", phonetic: "/wɜːrld/" },
+            { word: "Language", phonetic: "/ˈlæŋɡwɪdʒ/" },
+            { word: "Practice", phonetic: "/ˈpræktɪs/" },
+            { word: "Pronunciation", phonetic: "/prəˌnʌnsiˈeɪʃn/" },
+            { word: "Excellent", phonetic: "/ˈeksələnt/" },
+            { word: "Comfortable", phonetic: "/ˈkʌmftəbl/" },
+            { word: "Wednesday", phonetic: "/ˈwenzdeɪ/" },
+        ];
+        let pronIndex = 0;
+
+        function loadPronWord() {
+            const w = pronWords[pronIndex];
+            document.getElementById('pronWord').textContent = w.word;
+            document.getElementById('pronPhonetic').textContent = w.phonetic;
+            document.getElementById('pronResult').style.display = 'none';
+            document.getElementById('pronRecordBtn').textContent = '🎤 Gravar';
+            document.getElementById('pronRecordBtn').classList.remove('recording');
+        }
+
+        function playPronunciation() {
+            speakText(pronWords[pronIndex].word);
+        }
+
+        function recordPronunciation() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                alert('Seu navegador não suporta reconhecimento de voz. Use o Chrome.');
+                return;
+            }
+
+            const btn = document.getElementById('pronRecordBtn');
+            btn.textContent = '🔴 Ouvindo...';
+            btn.classList.add('recording');
+
+            const recognition = new SR();
+            recognition.lang = 'en-US';
+            recognition.start();
+
+            recognition.onresult = (e) => {
+                const userSaid = e.results[0][0].transcript;
+                const confidence = Math.round(e.results[0][0].confidence * 100);
+                checkPronunciation(userSaid, confidence);
+            };
+
+            recognition.onerror = () => {
+                btn.textContent = '🎤 Gravar';
+                btn.classList.remove('recording');
+            };
+
+            recognition.onend = () => {
+                btn.textContent = '🎤 Tentar Novamente';
+                btn.classList.remove('recording');
+            };
+        }
+
+        function checkPronunciation(userSaid, confidence) {
+            const target = pronWords[pronIndex].word.toLowerCase();
+            const said = userSaid.toLowerCase().trim();
+
+            document.getElementById('pronResult').style.display = 'block';
+            document.getElementById('pronUserSaid').textContent = userSaid;
+
+            const feedback = document.getElementById('pronFeedback');
+            const similarity = calculateSimilarity(said, target);
+
+            if (similarity > 0.8 || said.includes(target) || target.includes(said)) {
+                feedback.innerHTML = `<span style="color: var(--primary);">✅ Excelente! Pronúncia correta!</span><br><small>Confiança: ${confidence}%</small>`;
+                document.getElementById('pronResult').style.background = 'rgba(20, 184, 166, 0.2)';
+            } else if (similarity > 0.5) {
+                feedback.innerHTML = `<span style="color: var(--accent);">🔶 Quase lá! Continue praticando.</span><br><small>Esperado: "${pronWords[pronIndex].word}"</small>`;
+                document.getElementById('pronResult').style.background = 'rgba(251, 146, 60, 0.2)';
+            } else {
+                feedback.innerHTML = `<span style="color: #ef4444;">❌ Tente novamente.</span><br><small>Esperado: "${pronWords[pronIndex].word}"</small>`;
+                document.getElementById('pronResult').style.background = 'rgba(239, 68, 68, 0.2)';
+            }
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const longer = str1.length > str2.length ? str1 : str2;
+            const shorter = str1.length > str2.length ? str2 : str1;
+            if (longer.length === 0) return 1.0;
+            return (longer.length - editDistance(longer, shorter)) / longer.length;
+        }
+
+        function editDistance(s1, s2) {
+            const costs = [];
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i === 0) costs[j] = j;
+                    else if (j > 0) {
+                        let newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        function nextPronWord() {
+            pronIndex = (pronIndex + 1) % pronWords.length;
+            loadPronWord();
+        }
+
+        function prevPronWord() {
+            pronIndex = pronIndex === 0 ? pronWords.length - 1 : pronIndex - 1;
+            loadPronWord();
+        }
+
+        // ===== PROGRESS DASHBOARD =====
+        const achievements = [
+            { id: 'first_word', icon: '📚', name: 'Primeira Palavra', desc: 'Aprendeu 1 palavra', check: () => learnedWords.length >= 1 },
+            { id: 'ten_words', icon: '🎯', name: '10 Palavras', desc: 'Aprendeu 10 palavras', check: () => learnedWords.length >= 10 },
+            { id: 'fifty_words', icon: '🌟', name: '50 Palavras', desc: 'Aprendeu 50 palavras', check: () => learnedWords.length >= 50 },
+            { id: 'first_quiz', icon: '✅', name: 'Primeiro Quiz', desc: 'Respondeu 1 questão', check: () => userStats.questionsTotal >= 1 },
+            { id: 'ten_quiz', icon: '🏆', name: '10 Questões', desc: 'Respondeu 10 questões', check: () => userStats.questionsTotal >= 10 },
+            { id: 'perfect', icon: '💯', name: 'Perfeição', desc: '100% de precisão', check: () => userStats.questionsTotal > 0 && (userStats.questionsCorrect / userStats.questionsTotal) === 1 },
+        ];
+
+        function loadProgressDashboard() {
+            // Update stats
+            document.getElementById('progWords').textContent = learnedWords.length;
+            document.getElementById('progQuestions').textContent = userStats.questionsTotal;
+            document.getElementById('progStreak').textContent = userStats.streak;
+
+            const accuracy = userStats.questionsTotal > 0
+                ? Math.round((userStats.questionsCorrect / userStats.questionsTotal) * 100)
+                : 0;
+            document.getElementById('progAccuracy').textContent = accuracy + '%';
+
+            // Progress bars (based on goals)
+            const vocabPct = Math.min(100, Math.round((learnedWords.length / 64) * 100));
+            const grammarPct = Math.min(100, Math.round((userStats.questionsTotal / 50) * 100));
+            const listenPct = Math.min(100, Math.round((userStats.studyMinutes / 30) * 100));
+
+            document.getElementById('progVocabPct').textContent = vocabPct + '%';
+            document.getElementById('progVocabBar').style.width = vocabPct + '%';
+            document.getElementById('progGrammarPct').textContent = grammarPct + '%';
+            document.getElementById('progGrammarBar').style.width = grammarPct + '%';
+            document.getElementById('progListenPct').textContent = listenPct + '%';
+            document.getElementById('progListenBar').style.width = listenPct + '%';
+
+            // Achievements
+            const achievementsHtml = achievements.map(a => {
+                const unlocked = a.check();
+                return `
+                    <div style="padding: 15px; background: ${unlocked ? 'rgba(20, 184, 166, 0.2)' : 'rgba(255,255,255,0.05)'}; border-radius: 15px; opacity: ${unlocked ? 1 : 0.5};">
+                        <p style="font-size: 2rem;">${a.icon}</p>
+                        <p style="font-size: 0.8rem; font-weight: 600;">${a.name}</p>
+                        <p style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">${a.desc}</p>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('achievementsList').innerHTML = achievementsHtml;
+        }
+
+        // ===== INIT =====
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            showDashboard();
+        }
+
+        // Preload voices
+        if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+
+        // ===== PAYMENT SYSTEM =====
+        // CONFIGURAÇÃO: Chave PIX configurada
+        const PIX_CONFIG = {
+            key: 'Furtadoc293@gmail.com',
+            name: 'English Master Pro',
+            city: 'Brasil',
+            amount: '29.00'
+        };
+
+        // Atualiza o QR Code com a chave PIX
+        function updatePixQrCode() {
+            const pixData = `00020126580014br.gov.bcb.pix0136${PIX_CONFIG.key}5204000053039865404${PIX_CONFIG.amount}5802BR5925${PIX_CONFIG.name}6009${PIX_CONFIG.city}`;
+            document.getElementById('pixQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(PIX_CONFIG.key)}`;
+            document.getElementById('pixKeyDisplay').textContent = `Chave PIX: ${PIX_CONFIG.key}`;
+        }
+
+        function openPaymentModal() {
+            updatePixQrCode();
+            showModal('paymentModal');
+        }
+
+        function copyPixKey() {
+            navigator.clipboard.writeText(PIX_CONFIG.key).then(() => {
+                alert('✅ Chave PIX copiada para a área de transferência!');
+            });
+        }
+
+        function confirmPayment() {
+            const proof = document.getElementById('paymentProof').value;
+            if (!proof) {
+                alert('❌ Por favor, cole o comprovante ou ID da transação');
+                return;
+            }
+
+            // Salva o pedido de pagamento
+            const paymentRequest = {
+                user: currentUser,
+                proof: proof,
+                date: new Date().toISOString(),
+                amount: PIX_CONFIG.amount,
+                status: 'pending'
+            };
+
+            // Salva no localStorage para análise posterior
+            let payments = JSON.parse(localStorage.getItem('paymentRequests') || '[]');
+            payments.push(paymentRequest);
+            localStorage.setItem('paymentRequests', JSON.stringify(payments));
+
+            alert('✅ Pagamento enviado para análise!\\n\\nVocê receberá acesso ao plano Pro em até 24 horas após a confirmação do pagamento.');
+            hideModal('paymentModal');
+        }
+
+        // Atualiza botões de upgrade para abrir modal de pagamento
+        document.querySelectorAll('[onclick*="upgrade"]').forEach(btn => {
+            btn.onclick = openPaymentModal;
+        });
+
+        console.log('🚀 English Master Pro SaaS Ready!');
+    </script>
+</body>
+
+</html>

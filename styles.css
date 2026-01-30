@@ -2225,3 +2225,443 @@ body {
         text-align: center;
     }
 }
+
+/* ===== GRAMMAR PRACTICE STYLES ===== */
+
+/* Grammar Overview Stats */
+.grammar-overview {
+    margin-bottom: var(--spacing-lg);
+}
+
+.grammar-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: var(--gradient-card);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: center;
+    min-width: 120px;
+}
+
+.stat-box .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.stat-box .stat-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Tenses Grid */
+.tenses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.tense-card {
+    background: var(--gradient-card);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.tense-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.tense-card .tense-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+}
+
+.tense-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.tense-card p {
+    color: var(--accent-secondary);
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.tense-preview {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Tense Detail View */
+.tense-detail {
+    animation: fadeIn 0.3s ease;
+}
+
+.tense-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--gradient-card);
+    background-color: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.tense-header h3 {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.tense-header p {
+    color: var(--accent-secondary);
+    font-size: 1.1rem;
+}
+
+/* Tense Tabs */
+.tense-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.tense-tab {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.95rem;
+}
+
+.tense-tab:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.tense-tab.active {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white;
+}
+
+/* Tense Content */
+.tense-content {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Usage Card */
+.usage-card,
+.structure-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.usage-card h4,
+.structure-card h4 {
+    margin-bottom: var(--spacing-md);
+    color: var(--accent-primary);
+    font-size: 1.1rem;
+}
+
+.usage-card p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.usage-pt {
+    color: var(--text-secondary);
+    margin-top: var(--spacing-sm);
+    font-style: italic;
+}
+
+/* Structure Grid */
+.structure-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.structure-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--spacing-sm);
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+}
+
+.structure-type {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.structure-formula {
+    color: var(--accent-secondary);
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+/* Examples List */
+.examples-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.example-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    position: relative;
+}
+
+.example-context {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background: var(--accent-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--radius-xl);
+    font-size: 0.75rem;
+}
+
+.example-en {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.example-pt {
+    color: var(--accent-success);
+    margin-bottom: var(--spacing-sm);
+}
+
+.example-card .btn-icon {
+    position: absolute;
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 36px;
+    height: 36px;
+}
+
+/* Situations List */
+.situations-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.situation-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border-left: 4px solid var(--accent-tertiary);
+}
+
+.situation-context {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--accent-tertiary);
+}
+
+.situation-prompt {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+    font-family: monospace;
+    background: var(--bg-primary);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+.situation-answer {
+    color: var(--accent-success);
+    font-size: 0.95rem;
+}
+
+/* Practice Tab */
+.practice-question {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.question-label {
+    color: var(--accent-tertiary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.question-text {
+    font-size: 1.3rem;
+    font-family: monospace;
+}
+
+.practice-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.grammar-option {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 1rem;
+}
+
+.grammar-option:hover:not(:disabled) {
+    border-color: var(--accent-primary);
+    background: var(--bg-card-hover);
+}
+
+.grammar-option.correct {
+    background: var(--accent-success);
+    border-color: var(--accent-success);
+    color: white;
+}
+
+.grammar-option.incorrect {
+    background: var(--accent-danger);
+    border-color: var(--accent-danger);
+    color: white;
+}
+
+.grammar-option:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.practice-input-area {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.practice-input-area input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+}
+
+.practice-input-area input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.practice-feedback {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.feedback-success {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--accent-success);
+}
+
+.feedback-error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--accent-danger);
+}
+
+.feedback-correct {
+    color: var(--accent-success);
+    font-weight: 600;
+}
+
+.feedback-incorrect {
+    color: var(--text-primary);
+}
+
+.practice-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
+
+.btn-back-tense {
+    display: block;
+    margin-top: var(--spacing-lg);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    width: 100%;
+    text-align: center;
+}
+
+.btn-back-tense:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+/* Responsive Grammar */
+@media (max-width: 768px) {
+    .tenses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grammar-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tense-tabs {
+        flex-direction: column;
+    }
+
+    .practice-input-area {
+        flex-direction: column;
+    }
+
+    .practice-buttons {
+        flex-direction: column;
+    }
+}
