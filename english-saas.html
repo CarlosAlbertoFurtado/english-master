@@ -1673,9 +1673,15 @@
                 <h1 class="welcome-text">👋 Olá, <span id="userName">Usuário</span>!</h1>
                 <p style="color: rgba(255,255,255,0.6);">Continue sua jornada de aprendizado</p>
             </div>
-            <button class="btn btn-outline" onclick="openPaymentModal()" style="font-size: 0.85rem;">
-                ☕ Apoiar o Projeto
-            </button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="openPaymentModal()" style="font-size: 0.85rem;">
+                    ☕ Apoiar o Projeto
+                </button>
+                <button class="btn btn-outline" onclick="logoutUser()"
+                    style="font-size: 0.85rem; border-color: #ef4444;">
+                    🚪 Sair
+                </button>
+            </div>
         </div>
 
         <div class="dashboard-stats">
@@ -2053,6 +2059,15 @@
         </div>
         <div class="learning-content">
             <div class="grammar-card" style="text-align: center;">
+                <!-- Progress counter and category -->
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <span id="pronCounter" style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">1 / 50</span>
+                    <span id="pronCategory"
+                        style="color: var(--accent); font-size: 0.9rem; background: rgba(249, 115, 22, 0.1); padding: 5px 12px; border-radius: 20px;">🎯
+                        Difíceis</span>
+                </div>
+
                 <p style="color: rgba(255,255,255,0.5); margin-bottom: 10px;">Ouça e repita:</p>
 
                 <h2 id="pronWord" style="font-size: 2.5rem; margin-bottom: 5px;"></h2>
@@ -2226,10 +2241,18 @@
             showDashboard();
         }
 
+        function logoutUser() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                currentUser = null;
+                localStorage.removeItem('user');
+                showLanding();
+                // Clear form fields
+                document.querySelectorAll('input').forEach(input => input.value = '');
+            }
+        }
+
         function logout() {
-            currentUser = null;
-            localStorage.removeItem('user');
-            showLanding();
+            logoutUser();
         }
 
         function showDashboard() {
@@ -2492,6 +2515,15 @@
                 const u = new SpeechSynthesisUtterance(text);
                 u.lang = 'en-US';
                 u.rate = 0.9;
+
+                // Try to find a male English voice
+                const voices = window.speechSynthesis.getVoices();
+                const maleVoice = voices.find(v =>
+                    v.lang.includes('en') && (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('james') || v.name.toLowerCase().includes('google us english'))
+                ) || voices.find(v => v.lang.includes('en-US')) || voices[0];
+
+                if (maleVoice) u.voice = maleVoice;
+
                 window.speechSynthesis.speak(u);
             }
         }
@@ -3278,20 +3310,98 @@
             if (gameScore >= 20) showEncouragement();
         }
 
-        // ===== PRONUNCIATION =====
-        const pronWords = [
-            { word: "Hello", phonetic: "/həˈloʊ/" },
-            { word: "Thank you", phonetic: "/θæŋk juː/" },
-            { word: "Beautiful", phonetic: "/ˈbjuːtɪfl/" },
-            { word: "World", phonetic: "/wɜːrld/" },
-            { word: "Language", phonetic: "/ˈlæŋɡwɪdʒ/" },
-            { word: "Practice", phonetic: "/ˈpræktɪs/" },
-            { word: "Pronunciation", phonetic: "/prəˌnʌnsiˈeɪʃn/" },
-            { word: "Excellent", phonetic: "/ˈeksələnt/" },
-            { word: "Comfortable", phonetic: "/ˈkʌmftəbl/" },
-            { word: "Wednesday", phonetic: "/ˈwenzdeɪ/" },
+        // ===== PRONUNCIATION - INFINITE WORDS =====
+        const basePronWords = [
+            // Greetings
+            { word: "Hello", phonetic: "/həˈloʊ/", category: "greetings" },
+            { word: "Good morning", phonetic: "/ɡʊd ˈmɔːrnɪŋ/", category: "greetings" },
+            { word: "Good evening", phonetic: "/ɡʊd ˈiːvnɪŋ/", category: "greetings" },
+            { word: "How are you", phonetic: "/haʊ ɑːr juː/", category: "greetings" },
+            { word: "Nice to meet you", phonetic: "/naɪs tuː miːt juː/", category: "greetings" },
+
+            // Common words
+            { word: "Thank you", phonetic: "/θæŋk juː/", category: "common" },
+            { word: "Please", phonetic: "/pliːz/", category: "common" },
+            { word: "Sorry", phonetic: "/ˈsɔːri/", category: "common" },
+            { word: "Excuse me", phonetic: "/ɪkˈskjuːz miː/", category: "common" },
+            { word: "Yes", phonetic: "/jes/", category: "common" },
+            { word: "No", phonetic: "/noʊ/", category: "common" },
+
+            // Difficult words
+            { word: "Beautiful", phonetic: "/ˈbjuːtɪfl/", category: "difficult" },
+            { word: "World", phonetic: "/wɜːrld/", category: "difficult" },
+            { word: "Language", phonetic: "/ˈlæŋɡwɪdʒ/", category: "difficult" },
+            { word: "Practice", phonetic: "/ˈpræktɪs/", category: "difficult" },
+            { word: "Pronunciation", phonetic: "/prəˌnʌnsiˈeɪʃn/", category: "difficult" },
+            { word: "Excellent", phonetic: "/ˈeksələnt/", category: "difficult" },
+            { word: "Comfortable", phonetic: "/ˈkʌmftəbl/", category: "difficult" },
+            { word: "Wednesday", phonetic: "/ˈwenzdeɪ/", category: "difficult" },
+            { word: "February", phonetic: "/ˈfebrueri/", category: "difficult" },
+            { word: "Vegetable", phonetic: "/ˈvedʒtəbl/", category: "difficult" },
+            { word: "Chocolate", phonetic: "/ˈtʃɔːklət/", category: "difficult" },
+            { word: "Restaurant", phonetic: "/ˈrestərɑːnt/", category: "difficult" },
+            { word: "Necessary", phonetic: "/ˈnesəseri/", category: "difficult" },
+            { word: "Different", phonetic: "/ˈdɪfrənt/", category: "difficult" },
+            { word: "Interesting", phonetic: "/ˈɪntrəstɪŋ/", category: "difficult" },
+
+            // Expressions
+            { word: "I love you", phonetic: "/aɪ lʌv juː/", category: "expressions" },
+            { word: "What's up", phonetic: "/wɒts ʌp/", category: "expressions" },
+            { word: "No problem", phonetic: "/noʊ ˈprɑːbləm/", category: "expressions" },
+            { word: "Of course", phonetic: "/əv kɔːrs/", category: "expressions" },
+            { word: "By the way", phonetic: "/baɪ ðə weɪ/", category: "expressions" },
+            { word: "I don't know", phonetic: "/aɪ doʊnt noʊ/", category: "expressions" },
+            { word: "Never mind", phonetic: "/ˈnevər maɪnd/", category: "expressions" },
+            { word: "Take care", phonetic: "/teɪk ker/", category: "expressions" },
+            { word: "Good luck", phonetic: "/ɡʊd lʌk/", category: "expressions" },
+            { word: "See you later", phonetic: "/siː juː ˈleɪtər/", category: "expressions" },
+
+            // Numbers
+            { word: "Thirteen", phonetic: "/θɜːrˈtiːn/", category: "numbers" },
+            { word: "Thirty", phonetic: "/ˈθɜːrti/", category: "numbers" },
+            { word: "Thousand", phonetic: "/ˈθaʊznd/", category: "numbers" },
+            { word: "Million", phonetic: "/ˈmɪljən/", category: "numbers" },
+
+            // Days & Time
+            { word: "Monday", phonetic: "/ˈmʌndeɪ/", category: "time" },
+            { word: "Tuesday", phonetic: "/ˈtuːzdeɪ/", category: "time" },
+            { word: "Thursday", phonetic: "/ˈθɜːrzdeɪ/", category: "time" },
+            { word: "Tomorrow", phonetic: "/təˈmɔːroʊ/", category: "time" },
+            { word: "Yesterday", phonetic: "/ˈjestərdeɪ/", category: "time" },
+
+            // Travel
+            { word: "Airport", phonetic: "/ˈerpɔːrt/", category: "travel" },
+            { word: "Passport", phonetic: "/ˈpæspɔːrt/", category: "travel" },
+            { word: "Luggage", phonetic: "/ˈlʌɡɪdʒ/", category: "travel" },
+            { word: "Schedule", phonetic: "/ˈskedʒuːl/", category: "travel" },
+            { word: "Reservation", phonetic: "/ˌrezərˈveɪʃn/", category: "travel" },
+
+            // Business
+            { word: "Meeting", phonetic: "/ˈmiːtɪŋ/", category: "business" },
+            { word: "Colleague", phonetic: "/ˈkɑːliːɡ/", category: "business" },
+            { word: "Schedule", phonetic: "/ˈskedʒuːl/", category: "business" },
+            { word: "Opportunity", phonetic: "/ˌɑːpərˈtuːnəti/", category: "business" },
+            { word: "Professional", phonetic: "/prəˈfeʃənl/", category: "business" },
+
+            // Technology
+            { word: "Computer", phonetic: "/kəmˈpjuːtər/", category: "tech" },
+            { word: "Algorithm", phonetic: "/ˈælɡərɪðəm/", category: "tech" },
+            { word: "Database", phonetic: "/ˈdeɪtəbeɪs/", category: "tech" },
+            { word: "Download", phonetic: "/ˈdaʊnloʊd/", category: "tech" },
+            { word: "Password", phonetic: "/ˈpæswɜːrd/", category: "tech" },
         ];
+
+        // Infinite word generator - shuffles and cycles through all words
+        let pronWords = [...basePronWords];
         let pronIndex = 0;
+        let pronCycle = 0;
+
+        function shufflePronWords() {
+            pronWords = [...basePronWords].sort(() => Math.random() - 0.5);
+            pronIndex = 0;
+            pronCycle++;
+        }
+
 
         function loadPronWord() {
             const w = pronWords[pronIndex];
@@ -3300,6 +3410,29 @@
             document.getElementById('pronResult').style.display = 'none';
             document.getElementById('pronRecordBtn').textContent = '🎤 Gravar';
             document.getElementById('pronRecordBtn').classList.remove('recording');
+
+            // Show progress counter
+            const counter = document.getElementById('pronCounter');
+            if (counter) {
+                counter.textContent = `${pronIndex + 1} / ${pronWords.length} (Ciclo ${pronCycle + 1})`;
+            }
+
+            // Show category if element exists
+            const catEl = document.getElementById('pronCategory');
+            if (catEl && w.category) {
+                const catNames = {
+                    greetings: '👋 Cumprimentos',
+                    common: '💬 Comuns',
+                    difficult: '🎯 Difíceis',
+                    expressions: '🗣️ Expressões',
+                    numbers: '🔢 Números',
+                    time: '⏰ Tempo',
+                    travel: '✈️ Viagem',
+                    business: '💼 Negócios',
+                    tech: '💻 Tecnologia'
+                };
+                catEl.textContent = catNames[w.category] || w.category;
+            }
         }
 
         function playPronunciation() {
@@ -3387,12 +3520,22 @@
         }
 
         function nextPronWord() {
-            pronIndex = (pronIndex + 1) % pronWords.length;
+            pronIndex++;
+            // When we reach the end, shuffle and start again (infinite)
+            if (pronIndex >= pronWords.length) {
+                shufflePronWords();
+                showEncouragement(); // Celebrate completing a cycle!
+            }
             loadPronWord();
         }
 
         function prevPronWord() {
             pronIndex = pronIndex === 0 ? pronWords.length - 1 : pronIndex - 1;
+            loadPronWord();
+        }
+
+        function randomPronWord() {
+            pronIndex = Math.floor(Math.random() * pronWords.length);
             loadPronWord();
         }
 
